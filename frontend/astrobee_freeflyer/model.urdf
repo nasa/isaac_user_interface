@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<!-- Copyright (c) 2017, United States Government, as represented by the     -->
+<!-- Administrator of the National Aeronautics and Space Administration.     -->
+<!--                                                                         -->
+<!-- All rights reserved.                                                    -->
+<!--                                                                         -->
+<!-- The Astrobee platform is licensed under the Apache License, Version 2.0 -->
+<!-- (the "License"); you may not use this file except in compliance with    -->
+<!-- the License. You may obtain a copy of the License at                    -->
+<!--                                                                         -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0                          -->
+<!--                                                                         -->
+<!-- Unless required by applicable law or agreed to in writing, software     -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS,       -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or         -->
+<!-- implied. See the License for the specific language governing            -->
+<!-- permissions and limitations under the License.                          -->
+
+<robot name="astrobee" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <!-- BASE GEOMETRY -->
+ <link name="body">
+    <self_collide>false</self_collide>
+    <!-- body -->
+    <visual name="body_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/body.dae"/>
+      </geometry>
+    </visual>
+    <collision name="body_collision">
+      <origin xyz="-0.000794 0.000229 -0.003907" rpy="0 0 0" />
+      <geometry>
+        <box size="0.290513 0.151942 0.281129" />
+      </geometry>
+    </collision>
+    <!-- port pmc -->
+    <visual name="pmc_port_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/pmc.dae"/>
+      </geometry>
+    </visual>
+    <visual name="pmc_port_bumper_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/pmc_bumper.dae"/>
+      </geometry>
+    </visual>
+    <visual name="pmc_port_skin_visual">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/pmc_skin_bumble.dae"/>
+      </geometry>
+    </visual>
+    <collision name="pmc_port_collision">
+      <origin xyz="0 -0.117546 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.319199 0.083962 0.319588" />
+      </geometry>
+    </collision>
+    <!-- starboard pmc -->
+    <visual name="pmc_stbd_visual">
+      <origin xyz="0 0 0" rpy="0 3.14 3.14" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/pmc.dae"/>
+      </geometry>
+    </visual>
+    <visual name="pmc_stbd_bumper_visual">
+      <origin xyz="0 0 0" rpy="0 3.14 3.14" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/pmc_bumper.dae"/>
+      </geometry>
+    </visual>
+    <visual name="pmc_stbd_skin_visual">
+      <origin xyz="0 0 0" rpy="0 3.14 3.14" />
+      <geometry>
+        <mesh filename="package://astrobee_freeflyer/meshes/pmc_skin_bumble.dae"/>
+      </geometry>
+    </visual>
+    <collision name="pmc_stbd_collision">
+      <origin xyz="0 0.117546 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.319199 0.083962 0.319588" />
+      </geometry>
+    </collision>
+  </link>
+
+</robot>

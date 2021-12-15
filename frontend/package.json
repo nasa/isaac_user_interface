@@ -1,0 +1,23 @@
+{
+	"name": "isaac-data-interface",
+	"version": "1.0.0",
+	"description": "NASA ISAAC Data Interface Web-based Frontend",
+	"main": "static-server/server.js",
+	"scripts": {
+		"start": "node static-server/server.js",
+		"build:domparser": "browserify domparser.js -o include/js/prebuilt/DOMParser.js"
+	},
+	"author": "khaled.sharif@nasa.gov",
+	"dependencies": {
+		"express": "^4.16.4",
+		"express-http-proxy": "^1.6.0",
+		"express-ws": "^4.0.0",
+		"http-proxy-middleware": "^1.0.5",
+		"ws": "^6.1.2"
+	},
+	"devDependencies": {
+		"browserify": "^17.0.0",
+		"prettier": "2.2.1",
+		"xmldom": "^0.5.0"
+	}
+}

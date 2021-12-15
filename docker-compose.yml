@@ -1,0 +1,113 @@
+# Copyright © 2021, United States Government, as represented by the Administrator of the 
+# National Aeronautics and Space Administration. All rights reserved.
+#
+# The “ISAAC - Integrated System for Autonomous and Adaptive Caretaking platform” software is 
+# licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License. 
+#
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the 
+# License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+# either express or implied. See the License for the specific language governing 
+# permissions and limitations under the License.
+#
+# ----------------------------------------------------------------------------------------------------
+# NASA ISAAC User Interface
+# ----------------------------------------------------------------------------------------------------
+#
+version: '2.1'
+services:
+  idi_frontend:
+    # This service serves the static content that represents
+    # the frontend ISAAC data interface.
+    #
+    image: isaac_data_interface_frontend
+    build: './frontend'
+    hostname: idi_frontend
+    container_name: idi_frontend
+    ports:
+      - '8080:8080'
+
+  idi_backend:
+    # This service serves the front-end by providing it with
+    # historical telemetry that it retrieves from ROS bridge.
+    #
+    image: isaac_data_interface_backend
+    build: './backend'
+    hostname: idi_backend
+    container_name: idi_backend
+    command: python /main.py
+    volumes:
+      - './config.json:/config.json:ro'
+    depends_on:
+      - rosbridge
+      - idi_arangodb
+    expose:
+      - 9091
+    links:
+      - idi_arangodb
+
+  idi_arangodb:
+    # This service provides a database for the backend. The
+    # backend uses this database to store ROS messages in JSON format.
+    #
+    image: arangodb:latest
+    hostname: idi_arangodb
+    container_name: idi_arangodb
+    environment:
+      ARANGO_ROOT_PASSWORD: isaac
+    expose:
+      - 8529
+    volumes:
+      - arangodb_data_container:/data/arangodb3
+      - arangodb_apps_data_container:/data/arangodb3-apps
+
+  rosbridge:
+    # This service will provide a bridge between ROS and the web through
+    # a WebSocket open on port 9090.
+    #
+    # For more info, see:
+    # http://wiki.ros.org/rosbridge_suite
+    #
+    image: isaac_data_interface_rosbridge
+    build: './rosbridge'
+    hostname: rosbridge
+    container_name: rosbridge
+    entrypoint: '/ros_entrypoint.sh'
+    command: 'roslaunch --wait /rosbridge/publishers.launch'
+    expose:
+      - 9090
+    environment:
+      - ROS_MASTER_URI=http://172.17.0.1:11311
+
+  rosvideo:
+    # This service runs a web video server that will efficiently
+    # publish a stream of images from a ROS topic that is set to
+    # publish ROS messages of the type sensor_msgs/Image
+    #
+    # For more info, see:
+    # http://wiki.ros.org/web_video_server
+    #
+    image: isaac_data_interface_rosvideo
+    build: './rosvideo'
+    hostname: rosvideo
+    container_name: rosvideo
+    entrypoint: '/ros_entrypoint.sh'
+    command: 'rosrun web_video_server web_video_server'
+    expose:
+      - 8080
+    depends_on:
+      - rosbridge
+    environment:
+      - ROS_MASTER_URI=http://172.17.0.1:11311
+
+# ----------------------------------------------------------------------------------------------------
+# Docker Compose Volumes
+# ----------------------------------------------------------------------------------------------------
+volumes:
+  idi_database_volume:
+  arangodb_data_container:
+  arangodb_apps_data_container:
