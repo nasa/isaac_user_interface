@@ -1,0 +1,268 @@
+{
+	"telemetry": [
+		{
+			"name": "Astrobee /gnc/ekf position X",
+			"key": "ros.telemetry.ekf.pose.x",
+			"ros": {
+				"topic": "/gnc/ekf",
+				"type": "ff_msgs/EkfState",
+				"fieldName": "x",
+				"fieldPosition": "pose.position.x",
+				"fieldUnit": "meters"
+			}
+		},
+		{
+			"name": "Astrobee /gnc/ekf position Y",
+			"key": "ros.telemetry.ekf.pose.y",
+			"ros": {
+				"topic": "/gnc/ekf",
+				"type": "ff_msgs/EkfState",
+				"fieldName": "y",
+				"fieldPosition": "pose.position.y",
+				"fieldUnit": "meters"
+			}
+		},
+		{
+			"name": "Astrobee /gnc/ekf position Z",
+			"key": "ros.telemetry.ekf.pose.z",
+			"ros": {
+				"topic": "/gnc/ekf",
+				"type": "ff_msgs/EkfState",
+				"fieldName": "z",
+				"fieldPosition": "pose.position.z",
+				"fieldUnit": "meters"
+			}
+		}
+	],
+	"logs": [
+		{
+			"name": "ROS Logs (MAST only)",
+			"key": "ros.logs.rosout.mast",
+			"ros": {
+				"topic": "/rosout/mast"
+			}
+		},
+		{
+			"name": "ROS Logs (MLP only)",
+			"key": "ros.logs.rosout.mlp",
+			"ros": {
+				"topic": "/rosout/mlp"
+			}
+		},
+		{
+			"name": "ROS Logs (LLP only)",
+			"key": "ros.logs.rosout.llp",
+			"ros": {
+				"topic": "/rosout/llp"
+			}
+		},
+		{
+			"name": "ROS Logs",
+			"key": "ros.logs.rosout",
+			"ros": {
+				"topic": "/rosout"
+			}
+		}
+	],
+	"video": [
+		{
+			"name": "Astrobee Navcam",
+			"key": "ros.video.navcam",
+			"ros": {
+				"topic": "/mgt/img_sampler/nav_cam/image_record"
+			}
+		}
+	],
+	"plots": [
+		{
+			"name": "Astrobee /gnc/ekf position X, Y, Z",
+			"key": "telemetry.plot.ekf.position",
+			"series": [
+				"ros.telemetry.ekf.pose.x",
+				"ros.telemetry.ekf.pose.y",
+				"ros.telemetry.ekf.pose.z"
+			]
+		}
+	],
+	"service": [
+		{
+			"name": "Reset EKF",
+			"key": "ros.service.ekf.reset",
+			"ros": {
+				"name": "/gnc/ekf/reset",
+				"type": "std_srvs/Empty"
+			}
+		},
+		{
+			"name": "Configure Navcam",
+			"key": "ros.service.navcam.config",
+			"ros": {
+				"name": "/mgt/img_sampler/nav_cam/configure",
+				"type": "ff_msgs/ConfigureCamera",
+				"args": {
+					"mode": [
+						0,
+						1,
+						2
+					],
+					"rate": [
+						1,
+						5,
+						10
+					]
+				}
+			}
+		}
+	],
+	"schematic": [
+	],
+	"view": [
+		{
+			"name": "ISS CAD Model",
+			"key": "ros.view.iss",
+			"layer": "back",
+			"ros": {
+				"type": "urdf",
+				"param": "/iss/robot_description",
+				"tf": "iss"
+			}
+		},
+		{
+			"name": "World View",
+			"key": "ros.view",
+			"ros": {
+				"type": "camera",
+				"frame": "world",
+				"center": {
+					"x": 9.8,
+					"y": -9.8,
+					"z": 4.3
+				},
+				"position": {
+					"x": 17,
+					"y": -9.8,
+					"z": 4.1
+				}
+			}
+		},
+		{
+			"name": "ISS Camera 1",
+			"key": "ros.view.camera.iss.1",
+			"ros": {
+				"type": "camera",
+				"frame": "world",
+				"center": {
+					"x": 10.579183955225275,
+					"y": -9.773852411325496,
+					"z": 4.687881147984643
+				},
+				"position": {
+					"x": 11.64036413723439,
+					"y": -12.091670955026816,
+					"z": 3.966957901180347
+				}
+			}
+		},
+		{
+			"name": "ISS Camera 2",
+			"key": "ros.view.camera.iss.2",
+			"ros": {
+				"type": "camera",
+				"frame": "world",
+				"position": {
+					"x": 10.606331751387225,
+					"y": -11.409343434431502,
+					"z": 3.808130337949609
+				},
+				"center": {
+					"x": 10.887014160396564,
+					"y": -8.738828699228423,
+					"z": 4.7956292481005
+				}
+			}
+		},
+		{
+			"name": "ISS Isometric 1",
+			"key": "ros.view.camera.iss.isometric.1",
+			"ros": {
+				"type": "camera",
+				"frame": "world",
+				"position": {
+					"x": 4.613267718129302,
+					"y": -3.700829482078654,
+					"z": 1.496861523330681
+				},
+				"center": {
+					"x": 10.893555703956228,
+					"y": -9.316055011608782,
+					"z": 4.864923758249194
+				}
+			}
+		},
+		{
+			"name": "ISS Inspection View",
+			"key": "ros.view.camera.iss.inspection",
+			"ros": {
+				"type": "camera",
+				"frame": "world",
+				"position": {
+					"x": 11.693040119477779,
+					"y": -4.248426865805765,
+					"z": 3.8914348812505866
+				},
+				"center": {
+					"x": 10.350676179361937,
+					"y": -8.992240458908224,
+					"z": 5.4167148315266616
+				}
+			}
+		},
+		{
+			"name": "Empty View",
+			"key": "ros.view.empty",
+			"ros": {
+				"type": "camera",
+				"frame": "world",
+				"init": false,
+				"position": {
+					"x": 11.693040119477779,
+					"y": -4.248426865805765,
+					"z": 3.8914348812505866
+				},
+				"center": {
+					"x": 0,
+					"y": 0,
+					"z": 0
+				}
+			}
+		},
+		{
+			"name": "Astrobee",
+			"key": "ros.view.astrobee",
+			"layer": "front",
+			"ros": {
+				"type": "urdf",
+				"param": "/robot_description",
+				"tf": ""
+			}
+		},
+		{
+			"name": "Astrobee Dock",
+			"key": "ros.view.astrobee.dock",
+			"layer": "front",
+			"ros": {
+				"type": "urdf",
+				"param": "/dock/robot_description",
+				"tf": "dock"
+			}
+		},
+		{
+			"name": "Command Position",
+			"key": "ros.view.astrobee.command",
+			"ros": {
+				"type": "visualization_msgs/InteractiveMarker",
+				"topic": "/interactive_marker_teleop"
+			}
+		}
+	]
+}
