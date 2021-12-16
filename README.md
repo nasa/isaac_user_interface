@@ -78,6 +78,32 @@ The ISAAC UI assumes you have a ROS master node, but will run a master node for 
 
 ---
 
+## Usage with ISAAC
+
+This user interface was built to support the Integrated System for Autonomous and Adaptive Caretaking (ISAAC) project, which is available [here](https://github.com/nasa/isaac). Installation instructions for the ISAAC simulation are available [here](https://github.com/nasa/isaac/blob/master/INSTALL.md). Once the simulation has been built, the easiest way to launch the ISAAC UI linked to the ISAAC simulation is by following the steps below.
+
+```bash
+# move to the ISAAC workspace defined in the installation steps
+cd $ISAAC_WS
+
+# clone this repository inside the workspace directory
+git clone https://github.com/nasa/isaac_user_interface.git
+
+# source the ISAAC simulation setup.bash file
+source ./devel/setup.bash
+
+# unset $ROS_MASTER_URI so ISAAC UI launches its own ROS Master node
+unset ROS_MASTER_URI
+
+# build and run the ISAAC UI
+./build.sh && ./run.sh
+
+# start ISAAC simulation and connect to ROS Master node
+roslaunch isaac sim.launch --wait
+
+# the ISAAC UI is now available at http://localhost:8080
+```
+
 ## Debugging
 
 If you get a permissions error when running a Docker script, you can either:
