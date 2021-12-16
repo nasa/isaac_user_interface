@@ -15,7 +15,7 @@
 # permissions and limitations under the License.
 #
 
-FROM isaac:msgs
+FROM ros:noetic
 
 # try to suppress certain warnings during apt-get calls
 ARG DEBIAN_FRONTEND=noninteractive
@@ -25,14 +25,14 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN sudo apt-get update \
   && apt-get install -y apt-utils 2>&1 | grep -v "debconf: delaying package configuration, since apt-utils is not installed" \
   && apt-get install -y \
-    ros-kinetic-web-video-server \
+    ros-noetic-web-video-server \
   && rm -rf /var/lib/apt/lists/*
 
-RUN . /opt/ros/kinetic/setup.sh \
+RUN . /opt/ros/noetic/setup.sh \
   && apt-get update \
   && rosdep update 2>&1 | egrep -v 'as root|fix-permissions' \
-  && apt-get install -y python-pip \
+  && apt-get install -y python3-pip \
   && rm -rf /var/lib/apt/lists/*
 
-RUN echo "#!/bin/bash\nset -e\n\nsource \"/opt/ros/kinetic/setup.bash\"\nsource \"/src/isaac/devel/setup.bash\"\nexec \"\$@\"" > /ros_entrypoint.sh && \
+RUN echo "#!/bin/bash\nset -e\n\nsource \"/opt/ros/noetic/setup.bash\"\nexec \"\$@\"" > /ros_entrypoint.sh && \
   chmod +x /ros_entrypoint.sh
