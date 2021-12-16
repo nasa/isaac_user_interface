@@ -49,10 +49,15 @@ if [ $LAUNCH_ROS_MASTER -gt 0 ]; then
     # launching our own ros master using ros.docker-compose.yml
     docker-compose -f ./ros.docker-compose.yml -f ./idi.docker-compose.yml up -d --remove-orphans
 
+    # change the value of ROS_MASTER_URI to the ip address of container
+    export ROS_MASTER_URI=http://172.19.0.5:11311
+
 else
 
     # not launching ros master by only using docker-compose.yml
     docker-compose -f ./docker-compose.yml up -d --remove-orphans
+
+    # ROS_MASTER_URI does not get changed
 
 fi
 
@@ -65,4 +70,3 @@ echo "You can also run"
 echo "./status.sh"
 echo "for a more complete status check."
 echo "--------------------------------------------------------------------------------------------------"
-

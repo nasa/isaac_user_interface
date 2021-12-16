@@ -2,7 +2,8 @@
 
 set -e
 
-cd /home/khaled/Repositories/isaac_user_interface
+# go back to repository root
+cd ..
 
 # unset ROS_MASTER_URI to let the IUI know that
 # it should launch its own ROS Master node
@@ -12,6 +13,7 @@ unset ROS_MASTER_URI
 ./build.sh
 ./run.sh
 ./status.sh
-# sleep 5
-# ./status.sh
 # ./shutdown.sh
+
+# # return to tests directory
+# cd tests

@@ -16,6 +16,7 @@
 #
 # ----------------------------------------------------------------------------------------------------
 # NASA ISAAC User Interface
+# No ROS Master launched, already provided by user
 # ----------------------------------------------------------------------------------------------------
 #
 version: '2.1'
@@ -30,6 +31,8 @@ services:
     container_name: idi_frontend
     ports:
       - '8080:8080'
+    networks:
+      - isaac
 
   idi_backend:
     # This service serves the front-end by providing it with
@@ -49,6 +52,8 @@ services:
       - 9091
     links:
       - idi_arangodb
+    networks:
+      - isaac
 
   idi_arangodb:
     # This service provides a database for the backend. The
@@ -64,6 +69,8 @@ services:
     volumes:
       - arangodb_data_container:/data/arangodb3
       - arangodb_apps_data_container:/data/arangodb3-apps
+    networks:
+      - isaac
 
   rosbridge:
     # This service will provide a bridge between ROS and the web through
@@ -81,7 +88,9 @@ services:
     expose:
       - 9090
     environment:
-      - ROS_MASTER_URI=http://172.17.0.1:11311
+      - ROS_MASTER_URI=http://172.19.0.1:11311
+    networks:
+      - isaac
 
   rosvideo:
     # This service runs a web video server that will efficiently
@@ -102,7 +111,9 @@ services:
     depends_on:
       - rosbridge
     environment:
-      - ROS_MASTER_URI=http://172.17.0.1:11311
+      - ROS_MASTER_URI=http://172.19.0.1:11311
+    networks:
+      - isaac
 
 # ----------------------------------------------------------------------------------------------------
 # Docker Compose Volumes
@@ -111,3 +122,15 @@ volumes:
   idi_database_volume:
   arangodb_data_container:
   arangodb_apps_data_container:
+
+# ----------------------------------------------------------------------------------------------------
+# Docker Compose Networks
+# ----------------------------------------------------------------------------------------------------
+networks:
+  isaac:
+    name: isaac
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/24
+          gateway: 172.19.0.1
