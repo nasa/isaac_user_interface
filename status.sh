@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # Copyright © 2021, United States Government, as represented by the Administrator of the 
 # National Aeronautics and Space Administration. All rights reserved.
 #
@@ -19,27 +21,27 @@ echo "--------------------------------------------------------------------------
 echo "Diagnosing the NASA ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
-if [ $(docker container ls | grep idi_frontend | wc -l) -lt 1 ]; then
+if [ $(docker inspect idi_frontend | grep Running | grep true | wc -l) -lt 1 ]; then
     echo "ERROR! The ISAAC UI frontend is not running correctly."
     exit 1
 fi
 
-if [ $(docker container ls | grep idi_backend | wc -l) -lt 1 ]; then
+if [ $(docker inspect idi_backend | grep Running | grep true | wc -l) -lt 1 ]; then
     echo "ERROR! The ISAAC UI backend is not running correctly."
     exit 1
 fi
 
-if [ $(docker container ls | grep idi_arangodb | wc -l) -lt 1 ]; then
+if [ $(docker inspect idi_arangodb | grep Running | grep true | wc -l) -lt 1 ]; then
     echo "ERROR! The ISAAC UI database is not running correctly."
     exit 1
 fi
 
-if [ $(docker container ls | grep rosbridge | wc -l) -lt 1 ]; then
+if [ $(docker inspect rosbridge | grep Running | grep true | wc -l) -lt 1 ]; then
     echo "ERROR! The ISAAC UI ROS Bridge node is not running correctly."
     exit 1
 fi
 
-if [ $(docker container ls | grep rosvideo | wc -l) -lt 1 ]; then
+if [ $(docker inspect rosvideo | grep Running | grep true | wc -l) -lt 1 ]; then
     echo "ERROR! The ISAAC UI ROS Video node is not running correctly."
     exit 1
 fi

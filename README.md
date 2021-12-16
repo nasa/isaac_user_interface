@@ -1,13 +1,13 @@
 
 # NASA ISAAC User Interface
 
-[![GitHub license](https://img.shields.io/github/license/nasa/isaac)](https://github.com/nasa/isaac/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/nasa/isaac_user_interface)](https://github.com/nasa/isaac_user_interface/blob/master/LICENSE)
 
 ### The NASA ISAAC UI is a full-fledged web-based user interface system for ROS projects. It provides a pre-configured frontend, backend, and database that allow monitoring and control of robots built using ROS.
 
 ---
 
-![Example screenshot of ISAAC UI](isaac_ui.jpg)
+![Example screenshot of ISAAC UI](isaac-ui.jpg)
 
 ---
 
@@ -74,7 +74,7 @@ The ISAAC UI assumes you have a ROS master node, but will run a master node for 
 
 ## Architecture
 
-![Simplified architectural diagram of ISAAC UI](isaac_ui_diagram.png)
+![Simplified architectural diagram of ISAAC UI](isaac-ui-diagram.png)
 
 ---
 

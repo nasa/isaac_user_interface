@@ -55,9 +55,6 @@
 #
 version: '2.1'
 services:
-  # --------------------------------------------------------------------------------------------------
-  # Essential IDI Services
-  # --------------------------------------------------------------------------------------------------
   idi_frontend:
     # This service serves the static content that represents
     # the frontend ISAAC data interface.

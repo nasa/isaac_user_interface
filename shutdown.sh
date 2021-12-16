@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # Copyright © 2021, United States Government, as represented by the Administrator of the 
 # National Aeronautics and Space Administration. All rights reserved.
 #
@@ -15,8 +17,10 @@
 # permissions and limitations under the License.
 #
 
+set -e
+
 echo "--------------------------------------------------------------------------------------------------"
-echo "Shutting down the ISAAC Data Interface"
+echo "Shutting down the ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
 if [ $(docker container ls | grep rosmaster | wc -l)  -gt 0 ]; then
@@ -30,5 +34,5 @@ else
 fi
 
 echo "--------------------------------------------------------------------------------------------------"
-echo "See you later, alligator! The ISAAC Data Interface has shutdown."
+echo "See you later, alligator!"
 echo "--------------------------------------------------------------------------------------------------"
