@@ -21,29 +21,24 @@ echo "--------------------------------------------------------------------------
 echo "Diagnosing the NASA ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
-if [ $(docker inspect idi_frontend | grep Running | grep true | wc -l) -lt 1 ]; then
-    echo "ERROR! The ISAAC UI frontend is not running correctly."
-    exit 1
-fi
+# this function checks if a particular docker container is running
+check_container() {
+    if [ $(docker inspect $1 | grep Running | grep true | wc -l) -lt 1 ]; then
+        echo "--------------------------------------------------------------------------------------------------"
+        echo "ERROR!"
+        echo "The ISAAC UI $2 subsystem is not running correctly."
+        echo "Check the subsystem log below for errors."
+        echo "--------------------------------------------------------------------------------------------------"
+        docker logs $1
+        echo "--------------------------------------------------------------------------------------------------"
+        exit 1
+    fi
+}
 
-if [ $(docker inspect idi_backend | grep Running | grep true | wc -l) -lt 1 ]; then
-    echo "ERROR! The ISAAC UI backend is not running correctly."
-    exit 1
-fi
-
-if [ $(docker inspect idi_arangodb | grep Running | grep true | wc -l) -lt 1 ]; then
-    echo "ERROR! The ISAAC UI database is not running correctly."
-    exit 1
-fi
-
-if [ $(docker inspect rosbridge | grep Running | grep true | wc -l) -lt 1 ]; then
-    echo "ERROR! The ISAAC UI ROS Bridge node is not running correctly."
-    exit 1
-fi
-
-if [ $(docker inspect rosvideo | grep Running | grep true | wc -l) -lt 1 ]; then
-    echo "ERROR! The ISAAC UI ROS Video node is not running correctly."
-    exit 1
-fi
+check_container "idi_frontend" "frontend"
+check_container "idi_backend" "backend"
+check_container "rosbridge" "ROS Bridge node"
+check_container "rosvideo" "ROS Video node"
+check_container "idi_arangodb" "database"
 
 echo "All ISAAC UI Docker containers appear to be running."

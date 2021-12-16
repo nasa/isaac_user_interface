@@ -14,6 +14,11 @@
 # either express or implied. See the License for the specific language governing 
 # permissions and limitations under the License.
 #
+# ----------------------------------------------------------------------------------------------------
+# NASA ISAAC User Interface
+# Built in ROS Master node
+# ----------------------------------------------------------------------------------------------------
+#
 version: '2.1'
 services:
   rosmaster:
