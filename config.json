@@ -69,7 +69,14 @@
 			"name": "Astrobee Navcam",
 			"key": "ros.video.navcam",
 			"ros": {
-				"topic": "/mgt/img_sampler/nav_cam/image_record"
+				"topic": "/hw/cam_nav"
+			}
+		},
+		{
+			"name": "Astrobee Dockcam",
+			"key": "ros.video.dockcam",
+			"ros": {
+				"topic": "/hw/cam_dock"
 			}
 		}
 	],
@@ -146,97 +153,6 @@
 			}
 		},
 		{
-			"name": "ISS Camera 1",
-			"key": "ros.view.camera.iss.1",
-			"ros": {
-				"type": "camera",
-				"frame": "world",
-				"center": {
-					"x": 10.579183955225275,
-					"y": -9.773852411325496,
-					"z": 4.687881147984643
-				},
-				"position": {
-					"x": 11.64036413723439,
-					"y": -12.091670955026816,
-					"z": 3.966957901180347
-				}
-			}
-		},
-		{
-			"name": "ISS Camera 2",
-			"key": "ros.view.camera.iss.2",
-			"ros": {
-				"type": "camera",
-				"frame": "world",
-				"position": {
-					"x": 10.606331751387225,
-					"y": -11.409343434431502,
-					"z": 3.808130337949609
-				},
-				"center": {
-					"x": 10.887014160396564,
-					"y": -8.738828699228423,
-					"z": 4.7956292481005
-				}
-			}
-		},
-		{
-			"name": "ISS Isometric 1",
-			"key": "ros.view.camera.iss.isometric.1",
-			"ros": {
-				"type": "camera",
-				"frame": "world",
-				"position": {
-					"x": 4.613267718129302,
-					"y": -3.700829482078654,
-					"z": 1.496861523330681
-				},
-				"center": {
-					"x": 10.893555703956228,
-					"y": -9.316055011608782,
-					"z": 4.864923758249194
-				}
-			}
-		},
-		{
-			"name": "ISS Inspection View",
-			"key": "ros.view.camera.iss.inspection",
-			"ros": {
-				"type": "camera",
-				"frame": "world",
-				"position": {
-					"x": 11.693040119477779,
-					"y": -4.248426865805765,
-					"z": 3.8914348812505866
-				},
-				"center": {
-					"x": 10.350676179361937,
-					"y": -8.992240458908224,
-					"z": 5.4167148315266616
-				}
-			}
-		},
-		{
-			"name": "Empty View",
-			"key": "ros.view.empty",
-			"ros": {
-				"type": "camera",
-				"frame": "world",
-				"init": false,
-				"position": {
-					"x": 11.693040119477779,
-					"y": -4.248426865805765,
-					"z": 3.8914348812505866
-				},
-				"center": {
-					"x": 0,
-					"y": 0,
-					"z": 0
-				}
-			}
-		},
-		{
 			"name": "Astrobee",
 			"key": "ros.view.astrobee",
 			"layer": "front",
@@ -254,14 +170,6 @@
 				"type": "urdf",
 				"param": "/dock/robot_description",
 				"tf": "dock"
-			}
-		},
-		{
-			"name": "Command Position",
-			"key": "ros.view.astrobee.command",
-			"ros": {
-				"type": "visualization_msgs/InteractiveMarker",
-				"topic": "/interactive_marker_teleop"
 			}
 		}
 	]

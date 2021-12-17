@@ -37,7 +37,7 @@ app.use('/api', proxy('http://idi_backend:9091'));
 // /video/***
 app.use(
 	'/video',
-	proxy('http://' + (process.env.ROS_VIDEO_IP || 'rosvideo') + ':' + (process.env.ROS_VIDEO_PORT || 8080))
+	proxy('http://' + (process.env.ROS_VIDEO_IP || 'rosbridge') + ':' + (process.env.ROS_VIDEO_PORT || 8080))
 );
 
 // proxy for rosbridge websockets
@@ -50,7 +50,7 @@ app.use('/rosbridge', wsProxy);
 var port = process.env.PORT || 8080;
 
 let server = app.listen(port, function () {
-	console.log('ISAAC Data Interface is being hosted at http://localhost:' + port);
+	console.log('NASA ISAAC User Interface is now live at http://localhost:' + port);
 });
 
 server.on('upgrade', wsProxy.upgrade);

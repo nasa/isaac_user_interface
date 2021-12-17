@@ -87,33 +87,34 @@ services:
     command: 'roslaunch --wait /rosbridge/publishers.launch'
     expose:
       - 9090
+      - 8080
     environment:
       - ROS_MASTER_URI=http://172.19.0.1:11311
     networks:
       - isaac
 
-  rosvideo:
-    # This service runs a web video server that will efficiently
-    # publish a stream of images from a ROS topic that is set to
-    # publish ROS messages of the type sensor_msgs/Image
-    #
-    # For more info, see:
-    # http://wiki.ros.org/web_video_server
-    #
-    image: isaac_data_interface_rosvideo
-    build: './rosvideo'
-    hostname: rosvideo
-    container_name: rosvideo
-    entrypoint: '/ros_entrypoint.sh'
-    command: 'rosrun web_video_server web_video_server'
-    expose:
-      - 8080
-    depends_on:
-      - rosbridge
-    environment:
-      - ROS_MASTER_URI=http://172.19.0.1:11311
-    networks:
-      - isaac
+  # rosvideo:
+  #   # This service runs a web video server that will efficiently
+  #   # publish a stream of images from a ROS topic that is set to
+  #   # publish ROS messages of the type sensor_msgs/Image
+  #   #
+  #   # For more info, see:
+  #   # http://wiki.ros.org/web_video_server
+  #   #
+  #   image: isaac_data_interface_rosvideo
+  #   build: './rosvideo'
+  #   hostname: rosvideo
+  #   container_name: rosvideo
+  #   entrypoint: '/ros_entrypoint.sh'
+  #   command: 'rosrun web_video_server web_video_server'
+  #   expose:
+  #     - 8080
+  #   depends_on:
+  #     - rosbridge
+  #   environment:
+  #     - ROS_MASTER_URI=http://172.19.0.1:11311
+  #   networks:
+  #     - isaac
 
 # ----------------------------------------------------------------------------------------------------
 # Docker Compose Volumes

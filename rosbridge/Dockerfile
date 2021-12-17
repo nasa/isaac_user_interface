@@ -24,7 +24,8 @@ RUN apt-get install -y \
     ros-noetic-robot-state-publisher \
     ros-noetic-rosbridge-server \
     ros-noetic-tf2-ros \
-    ros-noetic-tf2-web-republisher
+    ros-noetic-tf2-web-republisher \
+    ros-noetic-web-video-server
 
 RUN . /opt/ros/noetic/setup.sh \
   && apt-get update \

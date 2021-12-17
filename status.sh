@@ -38,7 +38,6 @@ check_container() {
 check_container "idi_frontend" "frontend"
 check_container "idi_backend" "backend"
 check_container "rosbridge" "ROS Bridge node"
-check_container "rosvideo" "ROS Video node"
 check_container "idi_arangodb" "database"
 
 echo "All ISAAC UI Docker containers appear to be running."
