@@ -95,6 +95,9 @@ source ./devel/setup.bash
 # unset $ROS_MASTER_URI so ISAAC UI launches its own ROS Master node
 unset ROS_MASTER_URI
 
+# enter the ISAAC UI repository root directory
+cd isaac_user_interface
+
 # build and run the ISAAC UI
 ./build.sh && ./run.sh
 

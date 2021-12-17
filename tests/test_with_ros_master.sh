@@ -27,11 +27,19 @@ sleep 5
 curl -LI http://localhost:8080/api/config.json
 sleep 2
 docker exec -it rosbridge /ros_entrypoint.sh roswtf
+sleep 2
+roswtf
 # ===========================================
 
-# Start native astrobee simulation and connect to socket network
-export ROS_IP=`ip -4 addr show docker0 | grep -oP "(?<=inet ).*(?=/)"`
+# this is the gateway of the isaac network
+export ROS_IP=172.19.0.1
+
+# this is the fixed ip of the rosmaster node
+# within the isaac network
 export ROS_MASTER_URI=http://172.19.0.5:11311
+
+# launch astrobee simulation connected to
+# the ISAAC UI ROS Master node (--wait)
 roslaunch astrobee sim.launch rviz:=false dds:=false robot:=sim_pub streaming_mapper:=false --wait
 
 ./status.sh
