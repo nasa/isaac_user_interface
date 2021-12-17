@@ -27,8 +27,6 @@ sleep 5
 curl -LI http://localhost:8080/api/config.json
 sleep 2
 docker exec -it rosbridge /ros_entrypoint.sh roswtf
-sleep 2
-roswtf
 # ===========================================
 
 # this is the gateway of the isaac network
@@ -43,6 +41,7 @@ export ROS_MASTER_URI=http://172.19.0.5:11311
 roslaunch astrobee sim.launch rviz:=false dds:=false robot:=sim_pub streaming_mapper:=false --wait
 
 ./status.sh
+
 ./shutdown.sh
 
 # return to tests dir
