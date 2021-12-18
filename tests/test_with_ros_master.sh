@@ -1,10 +1,12 @@
 #!/bin/bash
 
-if [ $(docker container ls | grep rosmaster | wc -l) -gt 0 ]; then
-    docker kill rosmaster
-fi
-
 set -e
+
+if [ $(docker ps -q | wc -l) -gt 0 ]; then
+    echo "ERROR!"
+    echo "No Docker containers should be running for this test to begin."
+    exit 1
+fi
 
 source /home/khaled/astrobee/devel/setup.bash
 
@@ -19,15 +21,7 @@ unset ROS_MASTER_URI
 ./build.sh
 ./run.sh
 
-# ================ debugging ================
 ./status.sh
-sleep 2
-curl -LI http://localhost:8080
-sleep 5 
-curl -LI http://localhost:8080/api/config.json
-sleep 2
-docker exec -it rosbridge /ros_entrypoint.sh roswtf
-# ===========================================
 
 # this is the gateway of the isaac network
 export ROS_IP=172.19.0.1
@@ -38,9 +32,11 @@ export ROS_MASTER_URI=http://172.19.0.5:11311
 
 # launch astrobee simulation connected to
 # the ISAAC UI ROS Master node (--wait)
-roslaunch astrobee sim.launch rviz:=false dds:=false robot:=sim_pub streaming_mapper:=false --wait
+roslaunch astrobee sim.launch rviz:=false dds:=false robot:=sim_pub --wait
 
-./status.sh
+# cannot run because sim node died
+# and will show errors
+# ./status.sh
 
 ./shutdown.sh
 

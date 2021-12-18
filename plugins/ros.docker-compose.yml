@@ -24,24 +24,12 @@ services:
   rosmaster:
     image: ros:noetic
     command: roscore
-    hostname: rosmaster
     container_name: idi_rosmaster
     ports:
       - 11311:11311
     environment:
-      - ROS_MASTER_URI=http://rosmaster:11311
+      - ROS_MASTER_URI=http://172.19.0.5:11311
+      - ROS_IP=172.19.0.5
     networks:
       isaac:
         ipv4_address: 172.19.0.5
-
-# ----------------------------------------------------------------------------------------------------
-# Docker Compose Networks
-# ----------------------------------------------------------------------------------------------------
-networks:
-  isaac:
-    name: isaac
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.19.0.0/24
-          gateway: 172.19.0.1

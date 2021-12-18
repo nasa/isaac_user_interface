@@ -1,10 +1,12 @@
 #!/bin/bash
-
-if [ $(docker container ls | grep rosmaster | wc -l) -gt 0 ]; then
-    docker kill rosmaster
+set -e
+if [ $(docker ps -q | wc -l) -gt 0 ]; then
+    echo "ERROR!"
+    echo "No Docker containers should be running for this test to begin."
+    exit 1
 fi
 
-set -e
+
 
 # go back to repository root
 cd ..
@@ -16,19 +18,8 @@ unset ROS_MASTER_URI
 ./shutdown.sh
 ./build.sh
 ./run.sh
-
-sleep 2
-
 ./status.sh
-
-sleep 2
-
-curl -LI http://localhost:8080
-curl -LI http://localhost:8080/api/config.json
-
-docker exec -it rosbridge /ros_entrypoint.sh roswtf
-
-# ./shutdown.sh
+./shutdown.sh
 
 # return to tests directory
 cd tests

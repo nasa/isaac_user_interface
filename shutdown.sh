@@ -25,7 +25,7 @@ echo "--------------------------------------------------------------------------
 
 if [ $(docker container ls | grep rosmaster | wc -l)  -gt 0 ]; then
 
-    docker-compose -f ./ros.docker-compose.yml -f ./idi.docker-compose.yml down --remove-orphans --timeout 1
+    docker-compose -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml down --remove-orphans --timeout 1
 
 else
 

@@ -5,6 +5,14 @@ set -e
 if [ $(docker ps -q | wc -l) -gt 0 ]; then
     echo "ERROR!"
     echo "No Docker containers should be running for this test to begin."
+    echo "To kill all running containers:"
+    echo "   docker kill \$(docker ps -q)"
+    exit 1
+fi
+
+if [ $(ps aux | grep '[r]osmaster' | wc -l) -gt 0 ]; then
+    echo "ERROR!"
+    echo "Kill the existing rosmaster process before running this test."
     exit 1
 fi
 
@@ -39,17 +47,17 @@ export ROS_IP=172.19.0.1
 # should be provided to solve either.
 # ==============================================
 
-# the astrobee sim will launch its
-# own ROS master because we didn't
-# add "--wait" to the end
-roslaunch astrobee sim.launch rviz:=false dds:=false robot:=sim_pub
+# launch a roscore process and detach from it
+# don't worry, we kill this process later in
+# the script using its PID
+roscore > /dev/null 2>&1 &
 
-# script blocks, ctrl+c to continue
-
-# WARNING
-# you cannot run a status check here
-# because ROS Master is down
-# ./status.sh
+./status.sh
 
 ./shutdown.sh
+
+# find the PID of the roscore process we created
+ROSCORE_PID=$(ps aux | grep '[r]osmaster' | awk '{print $2}')
+kill -9 $ROSCORE_PID
+
 cd tests

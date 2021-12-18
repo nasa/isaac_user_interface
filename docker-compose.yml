@@ -33,6 +33,10 @@ services:
       - '8080:8080'
     networks:
       - isaac
+    # uncomment the two lines below ONLY if you are actively developing
+    # the IDI frontend and need fast reloads on code changes
+    # volumes:
+    #   - './frontend:/app:ro'
 
   idi_backend:
     # This service serves the front-end by providing it with
@@ -56,7 +60,7 @@ services:
       - isaac
 
   idi_arangodb:
-    # This service provides a database for the backend. The
+    # This service provides a NoSQL database for the ISAAC UI. The
     # backend uses this database to store ROS messages in JSON format.
     #
     image: arangodb:latest
@@ -73,11 +77,16 @@ services:
       - isaac
 
   rosbridge:
-    # This service will provide a bridge between ROS and the web through
-    # a WebSocket open on port 9090.
+    # This service will provide a bridge between ROS nodes and the 
+    # frontend subsystem through a WebSocket open on port 9090. 
+    #
+    # The backend subsystem uses this service to retrieve 
+    # JSON-formatted ROS messages and store these messages
+    # in the JSON-based database subsystem.
     #
     # For more info, see:
     # http://wiki.ros.org/rosbridge_suite
+    # http://wiki.ros.org/web_video_server
     #
     image: isaac_data_interface_rosbridge
     build: './rosbridge'
@@ -90,8 +99,10 @@ services:
       - 8080
     environment:
       - ROS_MASTER_URI=http://172.19.0.1:11311
+      - ROS_IP=172.19.0.99
     networks:
-      - isaac
+      isaac:
+        ipv4_address: 172.19.0.99
 
 # ----------------------------------------------------------------------------------------------------
 # Docker Compose Volumes

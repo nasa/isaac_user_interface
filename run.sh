@@ -35,7 +35,7 @@ LAUNCH_ROS_MASTER=0
 
 if [ -n "$ROS_MASTER_URI" ]; then
     echo "Using existing ROS Master node at $ROS_MASTER_URI"
-    echo "Warning: only ROS Master nodes on localhost at 11311 are supported for now"
+    echo "Warning: only ROS Master nodes on 172.19.0.1 at 11311 are supported for now"
 else
     LAUNCH_ROS_MASTER=1
     echo "Launching a new ROS Master node at http://172.19.0.5:11311"
@@ -47,7 +47,7 @@ set -e
 if [ $LAUNCH_ROS_MASTER -gt 0 ]; then 
 
     # launching our own ros master using ros.docker-compose.yml
-    docker-compose -f ./ros.docker-compose.yml -f ./idi.docker-compose.yml up -d --remove-orphans
+    docker-compose -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml up -d --remove-orphans
 
     # change the value of ROS_MASTER_URI to the ip address of container
     export ROS_MASTER_URI=http://172.19.0.5:11311
