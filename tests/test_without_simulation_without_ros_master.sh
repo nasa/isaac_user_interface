@@ -16,8 +16,6 @@ if [ $(ps aux | grep '[r]osmaster' | wc -l) -gt 0 ]; then
     exit 1
 fi
 
-source /home/khaled/astrobee/devel/setup.bash
-
 # go back to repository root
 cd ..
 

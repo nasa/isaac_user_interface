@@ -18,14 +18,26 @@
 #
 
 echo "--------------------------------------------------------------------------------------------------"
-echo "Diagnosing the NASA ISAAC User Interface"
+echo "Systems Check for the NASA ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
+
+# ref: https://dev.to/ifenna__/adding-colors-to-bash-scripts-48g4
+RED="\e[31m"
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+print_error() {
+    echo -e "[$1] ${RED}ERROR${ENDCOLOR}"
+}
+print_pass() {
+    echo -e "[$1] ${GREEN}PASS${ENDCOLOR}"
+}
 
 # this function checks if a particular docker container is running
 check_container() {
     if [ $(docker inspect $1 | grep Running | grep true | wc -l) -lt 1 ]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[C1] ERROR!"
+        print_error "C1"
         echo "The ISAAC UI $2 subsystem is not running correctly."
         echo "Check the subsystem log below for errors."
         echo "--------------------------------------------------------------------------------------------------"
@@ -40,14 +52,14 @@ check_ros_connection() {
     # ----------------------------------------------------------------------------------------------------
     # Run roswtf in the container to determine communication errors
     # ----------------------------------------------------------------------------------------------------
-    ROS_WTF_OUTPUT=$(docker exec $1 /ros_entrypoint.sh roswtf)
+    ROS_WTF_OUTPUT=$(docker exec -it $1 /ros_entrypoint.sh roswtf)
     SUB1="connection refused"
     SUB2="does not appear to be running"
     SUB9="No errors or warnings"
     echo "[R1] Running roswtf within the $2 subsystem"
     if [[ "$ROS_WTF_OUTPUT" == *"$SUB1"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[R1][A] ERROR!"
+        print_error "R1a"
         echo "The ISAAC UI $2 subsystem is experiencing ROS networking issues."
         echo "Check the output below for a connection error (look for the phrase 'connection refused')"
         echo "--------------------------------------------------------------------------------------------------"
@@ -57,7 +69,7 @@ check_ros_connection() {
     fi
     if [[ "$ROS_WTF_OUTPUT" == *"$SUB2"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[R1][B] ERROR!"
+        print_error "R1b"
         echo "The ISAAC UI $2 subsystem detected that another subsystem is not running."
         echo "Look below for the phrase 'does not appear to be running'"
         echo "--------------------------------------------------------------------------------------------------"
@@ -66,10 +78,10 @@ check_ros_connection() {
         exit 1
     fi
     if [[ "$ROS_WTF_OUTPUT" == *"$SUB9"* ]]; then
-        echo "[R1] PASS"
+        print_pass "R1"
     else
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[R1][Z] ERROR!"
+        print_error "R1z"
         echo "The ISAAC UI $2 subsystem is experiencing ROS networking issues."
         echo "The roswtf did not output the phrase 'No errors or warnings'"
         echo "Check the output of roswtf below to understand why this happened."
@@ -82,14 +94,14 @@ check_ros_connection() {
     # ----------------------------------------------------------------------------------------------------
     # Run rosnode ping -a in the container to determine communication errors
     # ----------------------------------------------------------------------------------------------------
-    ROS_NODE_OUTPUT=$(docker exec $1 /ros_entrypoint.sh rosnode ping -a)
+    ROS_NODE_OUTPUT=$(docker exec -it $1 /ros_entrypoint.sh rosnode ping -a)
     SUB1="Could not contact the following node"
     SUB2="Errors connecting to the following service"
     SUB3="connection refused"
     echo "[R2] Running rosnode ping -a within the $2 subsystem"
     if [[ "$ROS_NODE_OUTPUT" == *"$SUB1"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[R2][A] ERROR!"
+        print_error "R2a"
         echo "The ISAAC UI $2 subsystem could not contact one or more ROS nodes."
         echo "Check the output below for ROS node miscommunication errors."
         echo "--------------------------------------------------------------------------------------------------"
@@ -99,7 +111,7 @@ check_ros_connection() {
     fi
     if [[ "$ROS_NODE_OUTPUT" == *"$SUB2"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[R2][B] ERROR!"
+        print_error "R2b"
         echo "The ISAAC UI $2 subsystem experienced a fatal error connecting to one or more ROS services."
         echo "Check the output below for ROS service connection errors."
         echo "--------------------------------------------------------------------------------------------------"
@@ -109,7 +121,7 @@ check_ros_connection() {
     fi
     if [[ "$ROS_NODE_OUTPUT" == *"$SUB3"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[R2][C] ERROR!"
+        print_error "R2c"
         echo "The ISAAC UI $2 subsystem experienced a fatal connection error."
         echo "Check the output below for the phrase 'connection refused'"
         echo "--------------------------------------------------------------------------------------------------"
@@ -117,7 +129,7 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         exit 1
     fi
-    echo "[R2] PASS"
+    print_pass "R2"
 }
 
 check_url() {
@@ -135,14 +147,14 @@ check_url() {
 
     if [ $(curl -s -o /dev/null -w "%{http_code}" -LI --connect-timeout 1 --max-time 3 $1) -gt 299 ]; then
         echo "--------------------------------------------------------------------------------------------------"
-        echo "[U1] ERROR!"
+        print_error "U1"
         echo "The ISAAC UI $2 subsystem is not running correctly."
         echo "This is because the HTTP GET request to $1"
         echo "returned an HTTP error code >= 300."
         echo "--------------------------------------------------------------------------------------------------"
         exit 1
     else
-        echo "[U1] PASS"
+        print_pass "U1"
     fi
 }
 
@@ -163,6 +175,6 @@ sleep 5
 check_url "http://localhost:8080/api/config.json" "backend API (configuration provider)"
 
 echo "--------------------------------------------------------------------------------------------------"
-echo "ALL SYSTEMS ARE GO"
-echo "The NASA ISAAC User Interface appears to be running nominally."
+echo -e "${GREEN}ALL SYSTEMS ARE GO${ENDCOLOR}"
+echo "The ISAAC User Interface appears to be running nominally."
 echo "--------------------------------------------------------------------------------------------------"

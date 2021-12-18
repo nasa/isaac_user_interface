@@ -8,7 +8,16 @@ if [ $(docker ps -q | wc -l) -gt 0 ]; then
     exit 1
 fi
 
-source /home/khaled/astrobee/devel/setup.bash
+if [[ -z "${DEFAULT_ASTROBEE_PATH}" ]]; then
+    DEFAULT_ASTROBEE_PATH=$HOME/astrobee/devel/setup.bash
+fi
+if ! [[ -f "$DEFAULT_ASTROBEE_PATH" ]]; then
+    echo "ERROR!"
+    echo "Set the DEFAULT_ASTROBEE_PATH environment variable to equal"
+    echo "the path to your Astrobee devel/setup.bash file."
+    exit 1
+fi
+source $DEFAULT_ASTROBEE_PATH
 
 # go back to repository root
 cd ..
