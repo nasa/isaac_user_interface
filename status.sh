@@ -26,6 +26,11 @@ RED="\e[31m"
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
 
+# Global variable
+# 0 = no errors! all systems are go!
+# 1 = fatal error! abort mission!
+FATAL_ERROR=0
+
 print_error() {
     echo -e "[$1] ${RED}ERROR${ENDCOLOR}"
 }
@@ -65,7 +70,7 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         echo "${ROS_WTF_OUTPUT}"
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     fi
     if [[ "$ROS_WTF_OUTPUT" == *"$SUB2"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
@@ -75,10 +80,10 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         echo "${ROS_WTF_OUTPUT}"
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     fi
     if [[ "$ROS_WTF_OUTPUT" == *"$SUB9"* ]]; then
-        print_pass "R1"
+        print_pass "R1z"
     else
         echo "--------------------------------------------------------------------------------------------------"
         print_error "R1z"
@@ -88,7 +93,7 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         echo "${ROS_WTF_OUTPUT}"
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     fi
     
     # ----------------------------------------------------------------------------------------------------
@@ -107,7 +112,7 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         echo "${ROS_NODE_OUTPUT}"
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     fi
     if [[ "$ROS_NODE_OUTPUT" == *"$SUB2"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
@@ -117,7 +122,7 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         echo "${ROS_NODE_OUTPUT}"
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     fi
     if [[ "$ROS_NODE_OUTPUT" == *"$SUB3"* ]]; then
         echo "--------------------------------------------------------------------------------------------------"
@@ -127,9 +132,9 @@ check_ros_connection() {
         echo "--------------------------------------------------------------------------------------------------"
         echo "${ROS_NODE_OUTPUT}"
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     fi
-    print_pass "R2"
+    print_pass "R2z"
 }
 
 check_url() {
@@ -147,14 +152,14 @@ check_url() {
 
     if [ $(curl -s -o /dev/null -w "%{http_code}" -LI --connect-timeout 1 --max-time 3 $1) -gt 299 ]; then
         echo "--------------------------------------------------------------------------------------------------"
-        print_error "U1"
+        print_error "U1a"
         echo "The ISAAC UI $2 subsystem is not running correctly."
         echo "This is because the HTTP GET request to $1"
         echo "returned an HTTP error code >= 300."
         echo "--------------------------------------------------------------------------------------------------"
-        exit 1
+        FATAL_ERROR=1
     else
-        print_pass "U1"
+        print_pass "U1z"
     fi
 }
 
@@ -175,6 +180,15 @@ sleep 5
 check_url "http://localhost:8080/api/config.json" "backend API (configuration provider)"
 
 echo "--------------------------------------------------------------------------------------------------"
-echo -e "${GREEN}ALL SYSTEMS ARE GO${ENDCOLOR}"
-echo "The ISAAC User Interface appears to be running nominally."
+
+if [ $FATAL_ERROR -lt 1 ]; then
+    echo -e "${GREEN}ALL SYSTEMS ARE GO${ENDCOLOR}"
+    echo "The ISAAC User Interface appears to be running nominally."
+else
+    echo -e "${RED}HOUSTON, WE HAVE A PROBLEM${ENDCOLOR}"
+    echo "Check above for errors that indicate possible failiures within the subsystems."
+fi
+
+
+
 echo "--------------------------------------------------------------------------------------------------"

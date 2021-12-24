@@ -16,21 +16,22 @@
 #
 # ----------------------------------------------------------------------------------------------------
 # [Plugin]
-# This is the ROS Master node sandboxed within the ISAAC UI docker network
+# Services or service modifications needed to run the Astrobee sim
 # ----------------------------------------------------------------------------------------------------
 #
 version: '2.1'
 services:
-  rosmaster:
-    image: ros:noetic
-    command: roscore
-    container_name: idi_rosmaster
-    ports:
-      - 11311:11311
-    environment:
-      - ROS_MASTER_URI=http://172.19.0.5:11311
-      - ROS_IP=172.19.0.5
-    networks:
-      isaac:
-        ipv4_address: 172.19.0.5
-
+  rosbridge:
+    # When the user wants to use the ISAAC UI with
+    # the Astrobee simulation, the ISAAC UI will
+    # build a slightly different ROS Bridge node Docker
+    # container that is based on the Dockerfile.astrobee file
+    # within /rosbridge
+    #
+    # The purpose of this change is to let the ISAAC
+    # user specify custom ROS messages.
+    #
+    image: astrobee_rosbridge
+    build: 
+      context: './rosbridge'
+      dockerfile: 'Dockerfile.isaac'

@@ -19,11 +19,35 @@
 
 set -e
 
+usage_string="$0 usage:  [-h] [-i | --isaac] [-a | --astrobee]"
+
+usage()
+{
+    echo "$usage_string"
+}
+
+DOCKER_COMPOSE=" -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml "
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -i | --isaac )      DOCKER_COMPOSE+=" -f ./plugins/isaac.docker-compose.yml "
+                            ;;
+        -a | --astrobee )   DOCKER_COMPOSE+=" -f ./plugins/astrobee.docker-compose.yml "
+                            ;;
+        -h | --help )       usage
+                            exit
+                            ;;
+        * )                 usage
+                            exit 1
+    esac
+    shift
+done
+
 echo "--------------------------------------------------------------------------------------------------"
 echo "Building the NASA ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
-docker-compose -f ./docker-compose.yml build
+docker-compose $DOCKER_COMPOSE build
 
 echo "--------------------------------------------------------------------------------------------------"
 echo "Done!"

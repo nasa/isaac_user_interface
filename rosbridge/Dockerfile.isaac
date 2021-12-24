@@ -14,23 +14,23 @@
 # either express or implied. See the License for the specific language governing 
 # permissions and limitations under the License.
 #
-# ----------------------------------------------------------------------------------------------------
-# [Plugin]
-# This is the ROS Master node sandboxed within the ISAAC UI docker network
-# ----------------------------------------------------------------------------------------------------
-#
-version: '2.1'
-services:
-  rosmaster:
-    image: ros:noetic
-    command: roscore
-    container_name: idi_rosmaster
-    ports:
-      - 11311:11311
-    environment:
-      - ROS_MASTER_URI=http://172.19.0.5:11311
-      - ROS_IP=172.19.0.5
-    networks:
-      isaac:
-        ipv4_address: 172.19.0.5
 
+FROM isaac:msgs-ubuntu20.04
+
+RUN apt update
+
+RUN apt-get install -y \
+    ros-noetic-joint-state-publisher \
+    ros-noetic-robot-state-publisher \
+    ros-noetic-rosbridge-server \
+    ros-noetic-tf2-ros \
+    ros-noetic-tf2-web-republisher \
+    ros-noetic-web-video-server \
+    python3-pip
+
+RUN pip install future
+RUN mkdir /rosbridge
+COPY ./publishers.launch ./rosbridge/
+
+RUN echo "#!/bin/bash\nset -e\n\nsource \"/opt/ros/noetic/setup.bash\"\nexec \"\$@\"" > /ros_entrypoint.sh && \
+  chmod +x /ros_entrypoint.sh

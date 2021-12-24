@@ -98,8 +98,11 @@ services:
       - 9090
       - 8080
     environment:
-      - ROS_MASTER_URI=http://172.19.0.1:11311
-      - ROS_IP=172.19.0.99
+      # ROS Bridge node will default to "localhost" which is reachable
+      # via the ISAAC Docker network gateway, which is defined as
+      # http://172.19.0.1:11311, unless the DOCKER_COMPOSE_ROS_MASTER_URI was specified
+      - "ROS_MASTER_URI=${DOCKER_COMPOSE_ROS_MASTER_URI:-http://172.19.0.1:11311}"
+      - "ROS_IP=172.19.0.99"
     networks:
       isaac:
         ipv4_address: 172.19.0.99

@@ -7,7 +7,7 @@
 
 ---
 
-![Example screenshot of ISAAC UI](isaac-ui.jpg)
+![Example screenshot of ISAAC UI](images/isaac-ui.jpg)
 
 ---
 
@@ -74,7 +74,7 @@ The ISAAC UI assumes you have a ROS master node, but will run a master node for 
 
 ## Architecture
 
-![Simplified architectural diagram of ISAAC UI](isaac-ui-diagram.png)
+![Simplified architectural diagram of ISAAC UI](images/isaac-ui-diagram.png)
 
 ---
 

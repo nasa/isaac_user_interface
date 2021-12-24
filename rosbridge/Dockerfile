@@ -25,13 +25,8 @@ RUN apt-get install -y \
     ros-noetic-rosbridge-server \
     ros-noetic-tf2-ros \
     ros-noetic-tf2-web-republisher \
-    ros-noetic-web-video-server
-
-RUN . /opt/ros/noetic/setup.sh \
-  && apt-get update \
-  && apt-get upgrade -y \
-  && rosdep update 2>&1 | egrep -v 'as root|fix-permissions' \
-  && apt-get install -y python3-pip
+    ros-noetic-web-video-server \
+    python3-pip
 
 RUN pip install future
 RUN mkdir /rosbridge
