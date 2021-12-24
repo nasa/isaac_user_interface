@@ -9,20 +9,24 @@ if [ $(docker image ls | grep astrobee | grep latest-ubuntu20.04 | wc -l) -lt 1 
     exit 1
 fi
 
+SCRIPT_PATH=$(dirname "$(realpath -s "$0")")
+
+cd $SCRIPT_PATH/../../..
+
+./shutdown.sh
+
 if [ $(docker ps -q | wc -l) -gt 0 ]; then
     echo "ERROR!"
     echo "No Docker containers should be running for this test to begin."
     exit 1
 fi
 
-# go back to repository root
-cd ../../..
-
 # unset ROS_MASTER_URI to let the IUI know that
 # it should launch its own ROS Master node
 unset ROS_MASTER_URI
 
-./shutdown.sh
+# the -i passed to build and run scripts indicates
+# that we want to also launch Astrobee sim
 ./build.sh -a
 ./run.sh -a
 
@@ -44,6 +48,4 @@ docker run -it --rm --name astrobee \
         --env="DISPLAY" \
         --gpus all \
       astrobee/astrobee:latest-ubuntu20.04 \
-    /astrobee_init.sh roslaunch astrobee sim.launch --wait rviz:=true
-
-
+    /astrobee_init.sh roslaunch astrobee sim.launch --wait

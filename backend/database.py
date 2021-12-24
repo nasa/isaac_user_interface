@@ -36,11 +36,11 @@ class Database:
 
         sleep(5)
 
-        # Try to connect to the database 10 times, sleeping 1 second between each try
+        # Try to connect to the database 600 times, sleeping 1 second between each try
         # This is done because the database process takes a few seconds to begin responding
         # to HTTP requests
         self.conn = None
-        for _ in range(10):
+        for _ in range(600):
             try:
                 self.conn = Connection(arangoURL="http://idi_arangodb:8529", username="root", password="isaac", max_retries=1)
                 break

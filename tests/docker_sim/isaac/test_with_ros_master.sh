@@ -9,28 +9,37 @@ if [ $(docker image ls | grep isaac | grep latest-ubuntu20.04 | wc -l) -lt 1 ] ;
     exit 1
 fi
 
+SCRIPT_PATH=$(dirname "$(realpath -s "$0")")
+
+cd $SCRIPT_PATH/../../..
+
+./shutdown.sh
+
 if [ $(docker ps -q | wc -l) -gt 0 ]; then
     echo "ERROR!"
     echo "No Docker containers should be running for this test to begin."
     exit 1
 fi
 
-# go back to repository root
-cd ../../..
-
 # unset ROS_MASTER_URI to let the IUI know that
 # it should launch its own ROS Master node
 unset ROS_MASTER_URI
 
-./shutdown.sh
-./build.sh
-./run.sh
+# the -i passed to build and run scripts indicates
+# that we want to also launch ISAAC sim
+./build.sh -i
+./run.sh -i
 
 ./status.sh
 
+XSOCK=/tmp/.X11-unix
+XAUTH=/tmp/.docker.xauth
+touch $XAUTH
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
+
 # launch astrobee simulation connected to
 # the ISAAC UI ROS Master node (--wait)
-docker run -it --rm --name astrobee \
+docker run -it --rm --name isaac \
         --network isaac \
         --volume=$XSOCK:$XSOCK:rw \
         --volume=$XAUTH:$XAUTH:rw \
@@ -39,4 +48,4 @@ docker run -it --rm --name astrobee \
         --env="DISPLAY" \
         --gpus all \
       isaac/isaac:latest-ubuntu20.04 \
-    /astrobee_init.sh roslaunch astrobee sim.launch --wait
+    /astrobee_init.sh roslaunch isaac sim.launch --wait
