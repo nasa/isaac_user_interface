@@ -28,10 +28,10 @@ services:
     # container that is based on the Dockerfile.astrobee file
     # within /rosbridge
     #
-    # The purpose of this change is to let the ISAAC
+    # The purpose of this change is to let the ISAAC UI
     # user specify custom ROS messages.
     #
     image: astrobee_rosbridge
     build: 
       context: './rosbridge'
-      dockerfile: 'Dockerfile.isaac'
+      dockerfile: 'Dockerfile.astrobee'
