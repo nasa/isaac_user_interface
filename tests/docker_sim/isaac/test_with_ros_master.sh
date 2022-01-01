@@ -44,8 +44,9 @@ docker run -it --rm --name isaac \
         --volume=$XSOCK:$XSOCK:rw \
         --volume=$XAUTH:$XAUTH:rw \
         --env="ROS_MASTER_URI=http://172.19.0.5:11311" \
+        --env="ASTROBEE_RESOURCE_DIR=/src/astrobee/src/astrobee/resources" \
         --env="XAUTHORITY=${XAUTH}" \
         --env="DISPLAY" \
         --gpus all \
       isaac/isaac:latest-ubuntu20.04 \
-    /astrobee_init.sh roslaunch isaac sim.launch --wait
+    /ros_entrypoint.sh roslaunch isaac sim.launch --wait dds:=false robot:=sim_pub

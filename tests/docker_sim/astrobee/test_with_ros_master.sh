@@ -48,4 +48,4 @@ docker run -it --rm --name astrobee \
         --env="DISPLAY" \
         --gpus all \
       astrobee/astrobee:latest-ubuntu20.04 \
-    /astrobee_init.sh roslaunch astrobee sim.launch --wait
+    /astrobee_init.sh roslaunch astrobee sim.launch --wait dds:=false robot:=sim_pub
