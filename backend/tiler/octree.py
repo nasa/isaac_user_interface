@@ -1,9 +1,13 @@
 import open3d as o3d
-from tile import gen_tile
+from chopper import gen_tile as gt
 import json
 import argparse
 import os
 import os.path as op
+
+def gen_tile(tile_dir, obj_path, tree_counter, x_min, x_max, y_min, y_max, z_min, z_max, quality=60, scale=6.25):
+    gt(obj_path, tile_dir+"/"+tree_counter, True, True, x_min, x_max, y_min, y_max, z_min, z_max, quality, scale)
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--input', help='path to .obj file (that links to .mtl with same name & 1 or more .png files linked from .mtl file)', type=str, required=True)
@@ -133,18 +137,20 @@ def f_traverse(node, node_info):
     return early_stop
 
 
-print("[a]")
+print("[a] Reading mesh from {}".format(obj_path))
 mesh = o3d.io.read_triangle_mesh(obj_path)
 
-print("[b] ",mesh)
+print("[b] Read mesh:",mesh)
 voxel_grid = o3d.geometry.VoxelGrid.create_from_triangle_mesh(mesh, voxel_size=0.5)
 
-print("[c] ",voxel_grid)
+print("[c] Created voxel grid:",voxel_grid)
 octree = o3d.geometry.Octree(max_depth=2)
 octree.create_from_voxel_grid(voxel_grid)
 
-print("[d] ",octree)
+print("[d] Created octree:",octree)
 octree.traverse(f_traverse)
 
 with open(tile_dir+'/tileset.json', 'w', encoding='utf-8') as f:
     json.dump(tree, f, ensure_ascii=False, indent=4)
+
+print("[e] Completed!")
