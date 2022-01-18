@@ -36,5 +36,5 @@ RUN pip install future
 RUN mkdir /rosbridge
 COPY ./publishers.launch ./rosbridge/
 
-RUN echo "#!/bin/bash\nset -e\n\nsource \"/opt/ros/noetic/setup.bash\"\nexec \"\$@\"" > /ros_entrypoint.sh && \
+RUN echo "#!/bin/bash\nset -e\n\nsource \"/opt/ros/noetic/setup.bash\"\nsource \"/src/msgs/devel/setup.bash\"\nexec \"\$@\"" > /ros_entrypoint.sh && \
   chmod +x /ros_entrypoint.sh
