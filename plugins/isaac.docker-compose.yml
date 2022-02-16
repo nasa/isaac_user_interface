@@ -35,3 +35,5 @@ services:
     build: 
       context: './rosbridge'
       dockerfile: 'Dockerfile.isaac'
+      args:
+        REMOTE: ${REMOTE}
