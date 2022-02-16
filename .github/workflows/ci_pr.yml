@@ -1,0 +1,26 @@
+name: Build and test docker images
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - name: Checkout IUI
+      uses: actions/checkout@v2
+
+    - name: Build the stack
+      run: docker-compose
+              -f ./docker-compose.yml
+              -f ./plugins/ros.docker-compose.yml
+              -f ./plugins/isaac.docker-compose.yml build
+              --build-arg REMOTE="ghcr.io/nasa"
+
+    - name: Test stack
+      run: docker images
