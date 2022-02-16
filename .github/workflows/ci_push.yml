@@ -34,5 +34,5 @@ jobs:
         if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_user_interface_frontend:latest; fi;
         docker tag isaac_user_interface_backend:latest ghcr.io/${{ github.repository_owner }}/isaac_user_interface_backend:latest
         if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_user_interface_backend:latest; fi;
-        docker tag isaac_rosbridge:latest ghcr.io/${{ github.repository_owner }}/isaac_rosbridge:latest
-        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_rosbridge:latest; fi;
+        docker tag isaac_user_interface_rosbridge:latest ghcr.io/${{ github.repository_owner }}/isaac_user_interface_rosbridge:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_user_interface_rosbridge:latest; fi;
