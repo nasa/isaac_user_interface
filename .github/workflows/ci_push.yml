@@ -22,13 +22,17 @@ jobs:
               -f ./plugins/isaac.docker-compose.yml build
               --build-arg REMOTE="ghcr.io/nasa"
 
+    - name: Test stack
+      run: docker images
 
-    # - name: Log in to registry
-    #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
-    # - name: Push Docker image
-    #   run: |
-    #     if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac:latest-astrobee-ubuntu16.04; fi;
-    #     if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac:latest-ubuntu16.04; fi;
-    #     if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac:astrobee-msgs-ubuntu16.04; fi;
-    #     if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac:msgs-ubuntu16.04; fi;
+    - name: Push Docker image
+      run: |
+        docker tag isaac_data_interface_frontend:latest ghcr.io/${{ github.repository_owner }}/isaac_data_interface_frontend:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}//isaac_data_interface_frontend:latest; fi;
+        docker tag isaac_data_interface_backend:latest ghcr.io/${{ github.repository_owner }}/isaac_data_interface_backend:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_data_interface_backend:latest; fi;
+        docker tag isaac_rosbridge:latest ghcr.io/${{ github.repository_owner }}/isaac_rosbridge:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_rosbridge:latest; fi;
