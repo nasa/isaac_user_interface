@@ -19,8 +19,8 @@ jobs:
       run: docker-compose
               -f ./docker-compose.yml
               -f ./plugins/ros.docker-compose.yml
-              -f ./plugins/isaac.docker-compose.yml
-              --build-arg REMOTE="ghcr.io/nasa" build
+              -f ./plugins/isaac.docker-compose.yml build
+              --build-arg REMOTE="ghcr.io/nasa"
 
 
     # - name: Log in to registry
