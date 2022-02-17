@@ -25,7 +25,7 @@ services:
     # This service serves the static content that represents
     # the frontend ISAAC data interface.
     #
-    image: isaac_data_interface_frontend
+    image: isaac_user_interface_frontend
     build: './frontend'
     hostname: idi_frontend
     container_name: idi_frontend
@@ -42,7 +42,7 @@ services:
     # This service serves the front-end by providing it with
     # historical telemetry that it retrieves from ROS bridge.
     #
-    image: isaac_data_interface_backend
+    image: isaac_user_interface_backend
     build: './backend'
     hostname: idi_backend
     container_name: idi_backend
@@ -88,7 +88,7 @@ services:
     # http://wiki.ros.org/rosbridge_suite
     # http://wiki.ros.org/web_video_server
     #
-    image: isaac_data_interface_rosbridge
+    image: isaac_user_interface_rosbridge
     build: './rosbridge'
     hostname: rosbridge
     container_name: rosbridge

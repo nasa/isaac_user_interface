@@ -31,7 +31,9 @@ services:
     # The purpose of this change is to let the ISAAC UI
     # user specify custom ROS messages.
     #
-    image: isaac_rosbridge
+    image: isaac_user_interface_rosbridge
     build: 
       context: './rosbridge'
       dockerfile: 'Dockerfile.isaac'
+      args:
+        REMOTE: ${REMOTE}

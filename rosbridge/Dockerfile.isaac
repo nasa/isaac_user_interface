@@ -16,8 +16,10 @@
 #
 
 # ref 1: https://github.com/nasa/isaac/blob/develop/scripts/docker/astrobee_msgs.Dockerfile
-# ref 2: https://github.com/nasa/isaac/blob/develop/scripts/docker/isaac_msgs.Dockerfile
-FROM isaac:msgs-ubuntu20.04
+# ref 2: https://github.com/nasa/isaac/blob/develop/scripts/docker/isaac_msgs.
+
+ARG REMOTE=isaac
+FROM ${REMOTE}/isaac:msgs-ubuntu20.04
 
 RUN apt update
 

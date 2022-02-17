@@ -1,0 +1,38 @@
+name: Build, test and upload docker images
+
+on:
+  push:
+    branches: [ 'main' ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - name: Checkout IUI
+      uses: actions/checkout@v2
+
+    - name: Build the stack
+      run: docker-compose
+              -f ./docker-compose.yml
+              -f ./plugins/ros.docker-compose.yml
+              -f ./plugins/isaac.docker-compose.yml build
+              --build-arg REMOTE="ghcr.io/nasa"
+
+    - name: Test stack
+      run: docker images
+
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+    - name: Push Docker image
+      run: |
+        docker tag isaac_user_interface_frontend:latest ghcr.io/${{ github.repository_owner }}/isaac_user_interface_frontend:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_user_interface_frontend:latest; fi;
+        docker tag isaac_user_interface_backend:latest ghcr.io/${{ github.repository_owner }}/isaac_user_interface_backend:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_user_interface_backend:latest; fi;
+        docker tag isaac_user_interface_rosbridge:latest ghcr.io/${{ github.repository_owner }}/isaac_user_interface_rosbridge:latest
+        if [ "${{ github.repository_owner }}" = "nasa" ]; then docker push ghcr.io/${{ github.repository_owner }}/isaac_user_interface_rosbridge:latest; fi;
