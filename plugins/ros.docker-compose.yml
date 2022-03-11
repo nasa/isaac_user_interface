@@ -24,7 +24,7 @@ services:
   rosmaster:
     image: ros:noetic
     command: roscore
-    container_name: isaac_user_interface_rosmaster
+    container_name: iui_rosmaster
     ports:
       - 11311:11311
     environment:

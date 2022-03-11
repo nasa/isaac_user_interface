@@ -163,15 +163,15 @@ check_url() {
     fi
 }
 
-check_container "idi_frontend" "frontend"
-check_container "idi_backend" "backend"
+check_container "iui_frontend" "frontend"
+check_container "iui_backend" "backend"
 check_container "rosbridge" "ROS Bridge node"
-check_container "idi_arangodb" "database"
+check_container "iui_arangodb" "database"
 
 check_ros_connection "rosbridge" "ROS Bridge node"
 
 if [ $(docker container ls | grep rosmaster | wc -l)  -gt 0 ]; then
-    check_ros_connection "idi_rosmaster" "ROS Master node"
+    check_ros_connection "iui_rosmaster" "ROS Master node"
 fi
 
 sleep 2

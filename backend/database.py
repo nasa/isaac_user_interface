@@ -31,7 +31,7 @@ logging.basicConfig()
 
 class Database:
     def __init__(self):
-        # Initiate the connection to http://idi_arangodb:8529
+        # Initiate the connection to http://iui_arangodb:8529
         print("Database: Initiating connection")
 
         sleep(5)
@@ -42,7 +42,7 @@ class Database:
         self.conn = None
         for _ in range(600):
             try:
-                self.conn = Connection(arangoURL="http://idi_arangodb:8529", username="root", password="isaac", max_retries=1)
+                self.conn = Connection(arangoURL="http://iui_arangodb:8529", username="root", password="isaac", max_retries=1)
                 break
             except ConnectionError:
                 print("Database couldn't be reached; sleeping for 1 second before retrying")

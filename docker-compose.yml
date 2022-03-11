@@ -21,14 +21,14 @@
 #
 version: '2.1'
 services:
-  idi_frontend:
+  iui_frontend:
     # This service serves the static content that represents
     # the frontend ISAAC data interface.
     #
     image: isaac_user_interface_frontend
     build: './frontend'
-    hostname: idi_frontend
-    container_name: idi_frontend
+    hostname: iui_frontend
+    container_name: iui_frontend
     ports:
       - '8080:8080'
     networks:
@@ -38,34 +38,34 @@ services:
     # volumes:
     #   - './frontend:/app:ro'
 
-  idi_backend:
+  iui_backend:
     # This service serves the front-end by providing it with
     # historical telemetry that it retrieves from ROS bridge.
     #
     image: isaac_user_interface_backend
     build: './backend'
-    hostname: idi_backend
-    container_name: idi_backend
+    hostname: iui_backend
+    container_name: iui_backend
     command: python /main.py
     volumes:
       - './config.json:/config.json:ro'
     depends_on:
       - rosbridge
-      - idi_arangodb
+      - iui_arangodb
     expose:
       - 9091
     links:
-      - idi_arangodb
+      - iui_arangodb
     networks:
       - isaac
 
-  idi_arangodb:
+  iui_arangodb:
     # This service provides a NoSQL database for the ISAAC UI. The
     # backend uses this database to store ROS messages in JSON format.
     #
     image: arangodb:latest
-    hostname: idi_arangodb
-    container_name: idi_arangodb
+    hostname: iui_arangodb
+    container_name: iui_arangodb
     environment:
       ARANGO_ROOT_PASSWORD: isaac
     expose:
@@ -111,7 +111,7 @@ services:
 # Docker Compose Volumes
 # ----------------------------------------------------------------------------------------------------
 volumes:
-  idi_database_volume:
+  iui_database_volume:
   arangodb_data_container:
   arangodb_apps_data_container:
 

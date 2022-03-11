@@ -29,7 +29,7 @@ const {createProxyMiddleware} = require('http-proxy-middleware');
 // by doing this we can access the backend API from the
 // frontend by using:
 // /api/***
-app.use('/api', proxy('http://idi_backend:9091'));
+app.use('/api', proxy('http://iui_backend:9091'));
 
 // this is a proxy for ROS web video server
 // by doing this we can access ROS web video server from

@@ -60,7 +60,7 @@ echo "--------------------------------------------------------------------------
 # Check that the ISAAC UI isn't already running
 # TODO this is a rudimentary check that is prone to error
 # eg: it doesn't check if the UI is completely running
-if [ $(docker ps -q | grep idi_frontend | wc -l) -gt 0 ]; then
+if [ $(docker ps -q | grep iui_frontend | wc -l) -gt 0 ]; then
     echo "ERROR!"
     echo "The ISAAC UI is already running."
     echo "You can shutdown the ISAAC UI using the following script:"
