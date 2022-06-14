@@ -99,7 +99,7 @@ unset ROS_MASTER_URI
 cd isaac_user_interface
 
 # build and run the ISAAC UI
-./build.sh && ./run.sh
+./build.sh --isaac && ./run.sh --isaac
 
 # start ISAAC simulation and connect to ROS Master node
 roslaunch isaac sim.launch --wait
