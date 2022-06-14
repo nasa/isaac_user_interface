@@ -19,7 +19,7 @@ jobs:
       run: docker-compose
               -f ./docker-compose.yml
               -f ./plugins/ros.docker-compose.yml
-              -f ./plugins/isaac.docker-compose.yml build
+              -f ./plugins/rosbridge_isaac.docker-compose.yml build
               --build-arg REMOTE="ghcr.io/nasa"
 
     - name: Test stack
