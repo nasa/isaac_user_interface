@@ -165,7 +165,7 @@ check_url() {
 
 check_container "iui_frontend" "frontend"
 check_container "iui_backend" "backend"
-check_container "rosbridge" "ROS Bridge node"
+check_container "iui_rosbridge" "ROS Bridge node"
 check_container "iui_arangodb" "database"
 
 check_ros_connection "iui_rosbridge" "ROS Bridge node"

@@ -23,13 +23,20 @@ echo "--------------------------------------------------------------------------
 echo "Shutting down the ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
-bridge=" -f ./plugins/rosbridge.docker-compose.yml "
+usage_string="$0 usage:  [-h] [-i | --isaac] [-a | --astrobee]"
+
+usage()
+{
+    echo "$usage_string"
+}
+
+bridge=""
 
 while [ "$1" != "" ]; do
     case $1 in
-        -i | --isaac )      bridge+=" -f ./plugins/rosbridge_isaac.docker-compose.yml "
+        -i | --isaac )      bridge=" -f ./plugins/isaac.docker-compose.yml "
                             ;;
-        -a | --astrobee )   bridge+=" -f ./plugins/rosbridge_astrobee.docker-compose.yml "
+        -a | --astrobee )   bridge=" -f ./plugins/astrobee.docker-compose.yml "
                             ;;
         -h | --help )       usage
                             exit

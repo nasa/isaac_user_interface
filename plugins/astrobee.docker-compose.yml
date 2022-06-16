@@ -21,7 +21,7 @@
 #
 version: '2.1'
 services:
-  rosbridge:
+  iui_rosbridge:
     # When the user wants to use the ISAAC UI with
     # the Astrobee simulation, the ISAAC UI will
     # build a slightly different ROS Bridge node Docker

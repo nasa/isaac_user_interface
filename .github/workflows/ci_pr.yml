@@ -15,8 +15,14 @@ jobs:
     - name: Checkout IUI
       uses: actions/checkout@v2
 
-    - name: Build the stack
+    - name: Build the base IUI stack
       run: ./build.sh
+
+    - name: Build the ISAAC IUI stack
+      run: ./build.sh --astrobee
+
+    - name: Build the ISAAC IUI stack
+      run: ./build.sh --isaac
 
     - name: Test stack
       run: docker images

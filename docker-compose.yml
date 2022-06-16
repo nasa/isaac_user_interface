@@ -46,7 +46,7 @@ services:
     volumes:
       - './config.json:/config.json:ro'
     depends_on:
-      - rosbridge
+      - iui_rosbridge
       - iui_arangodb
     expose:
       - 9091
@@ -72,7 +72,7 @@ services:
     networks:
       - iui
 
-  rosbridge:
+  iui_rosbridge:
     # This service will provide a bridge between ROS nodes and the
     # frontend subsystem through a WebSocket open on port 9090.
     #

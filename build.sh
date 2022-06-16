@@ -26,18 +26,13 @@ usage()
     echo "$usage_string"
 }
 
-# Set remote to local
-export REMOTE=isaac
-
 DOCKER_COMPOSE=" -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml "
 
 while [ "$1" != "" ]; do
     case $1 in
         -i | --isaac )      DOCKER_COMPOSE+=" -f ./plugins/isaac.docker-compose.yml "
                             ;;
-        -a | --astrobee )   DOCKER_COMPOSE+=" -f ./plugins/rastrobee.docker-compose.yml "
-                            ;;
-        -r | --remote )     REMOTE=ghcr.io/nasa
+        -a | --astrobee )   DOCKER_COMPOSE+=" -f ./plugins/astrobee.docker-compose.yml "
                             ;;
         -h | --help )       usage
                             exit
