@@ -46,7 +46,7 @@ services:
     volumes:
       - './config.json:/config.json:ro'
     depends_on:
-      - rosbridge
+      - iui_rosbridge
       - iui_arangodb
     expose:
       - 9091
