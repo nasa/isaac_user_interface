@@ -27,12 +27,15 @@ usage()
 }
 
 DOCKER_COMPOSE=" -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml "
+remote=isaac
 
 while [ "$1" != "" ]; do
     case $1 in
         -i | --isaac )      DOCKER_COMPOSE+=" -f ./plugins/isaac.docker-compose.yml "
                             ;;
         -a | --astrobee )   DOCKER_COMPOSE+=" -f ./plugins/astrobee.docker-compose.yml "
+                            ;;
+        -r | --remote )     remote=ghcr.io/nasa
                             ;;
         -h | --help )       usage
                             exit
@@ -47,7 +50,7 @@ echo "--------------------------------------------------------------------------
 echo "Building the NASA ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
-docker-compose $DOCKER_COMPOSE build
+docker-compose $DOCKER_COMPOSE build --build-arg REMOTE=$remote
 
 echo "--------------------------------------------------------------------------------------------------"
 echo "Done!"
