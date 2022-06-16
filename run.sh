@@ -25,16 +25,15 @@ usage()
 }
 
 DOCKER_COMPOSE=" -f ./docker-compose.yml "
-bridge=" -f ./plugins/rosbridge.docker-compose.yml "
 ASTROBEE_SIM=0
 ISAAC_SIM=0
 
 while [ "$1" != "" ]; do
     case $1 in
-        -i | --isaac )      bridge=" -f ./plugins/isaac.docker-compose.yml "
+        -i | --isaac )      DOCKER_COMPOSE+=" -f ./plugins/isaac.docker-compose.yml "
                             ISAAC_SIM=1
                             ;;
-        -a | --astrobee )   bridge=" -f ./plugins/astrobee.docker-compose.yml "
+        -a | --astrobee )   DOCKER_COMPOSE+=" -f ./plugins/astrobee.docker-compose.yml "
                             ASTROBEE_SIM=1
                             ;;
         -h | --help )       usage
@@ -45,7 +44,6 @@ while [ "$1" != "" ]; do
     esac
     shift
 done
-DOCKER_COMPOSE+=$bridge
 
 # [CHECK] ISAAC and Astrobee cannot be run at the same time
 if [ $ISAAC_SIM -gt 0 ] && [ $ASTROBEE_SIM -gt 0 ]; then
