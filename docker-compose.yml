@@ -19,7 +19,7 @@
 # No ROS Master launched, already provided by user
 # ----------------------------------------------------------------------------------------------------
 #
-version: '2.1'
+version: '2.2'
 services:
   iui_frontend:
     # This service serves the static content that represents

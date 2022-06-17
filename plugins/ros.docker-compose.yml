@@ -19,7 +19,7 @@
 # This is the ROS Master node sandboxed within the ISAAC UI docker network
 # ----------------------------------------------------------------------------------------------------
 #
-version: '2.1'
+version: '2.2'
 services:
   rosmaster:
     image: ros:noetic

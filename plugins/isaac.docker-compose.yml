@@ -19,7 +19,7 @@
 # Services or service modifications needed to run the ISAAC sim
 # ----------------------------------------------------------------------------------------------------
 #
-version: '2.1'
+version: '2.2'
 services:
   iui_rosbridge:
     # When the user wants to use the ISAAC UI with
