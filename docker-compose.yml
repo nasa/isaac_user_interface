@@ -102,7 +102,7 @@ services:
 # Docker Compose Volumes
 # ----------------------------------------------------------------------------------------------------
 volumes:
-  idi_database_volume:
+  iui_database_volume:
   arangodb_data_container:
   arangodb_apps_data_container:
 

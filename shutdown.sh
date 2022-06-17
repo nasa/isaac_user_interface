@@ -23,9 +23,33 @@ echo "--------------------------------------------------------------------------
 echo "Shutting down the ISAAC User Interface"
 echo "--------------------------------------------------------------------------------------------------"
 
+usage_string="$0 usage:  [-h] [-i | --isaac] [-a | --astrobee]"
+
+usage()
+{
+    echo "$usage_string"
+}
+
+bridge=""
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -i | --isaac )      bridge=" -f ./plugins/isaac.docker-compose.yml "
+                            ;;
+        -a | --astrobee )   bridge=" -f ./plugins/astrobee.docker-compose.yml "
+                            ;;
+        -h | --help )       usage
+                            exit
+                            ;;
+        * )                 usage
+                            exit 1
+    esac
+    shift
+done
+
 if [ $(docker container ls | grep rosmaster | wc -l)  -gt 0 ]; then
 
-    docker-compose -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml down --remove-orphans --timeout 1
+    docker-compose -f ./docker-compose.yml -f ./plugins/ros.docker-compose.yml $bridge down --remove-orphans --timeout 1
 
 else
 
