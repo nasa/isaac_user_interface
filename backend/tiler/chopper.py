@@ -1,3 +1,19 @@
+# Copyright © 2021, United States Government, as represented by the Administrator of the
+# National Aeronautics and Space Administration. All rights reserved.
+#
+# The “ISAAC - Integrated System for Autonomous and Adaptive Caretaking platform” software is
+# licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+#
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the
+# License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
 import argparse
 import os.path as op
 import random
@@ -14,20 +30,20 @@ def run(command):
     subprocess.run(command, shell=True, check=True)
 
 
-def random_string(N):
+def random_string(n):
     return "".join(
         random.SystemRandom().choice(string.ascii_uppercase + string.digits)
-        for _ in range(N)
+        for _ in range(n)
     )
 
 
 def gen_tile(
-    input, output, b3dm, crop, min_x, min_y, min_z, max_x, max_y, max_z, quality, scale
+    inp, output, b3dm, crop, min_x, min_y, min_z, max_x, max_y, max_z, quality, scale
 ):
     tmp_dir = "/tmp/" + random_string(20)
     mkdir(tmp_dir)
 
-    obj_filename = input.split("/")[-1]
+    obj_filename = inp.split("/")[-1]
     tmp_cropped_obj = tmp_dir + "/" + obj_filename
 
     # TODO: Fix mtl_filename to equal the mtl file defined in the obj file
@@ -36,9 +52,9 @@ def gen_tile(
     mtl_filename = obj_filename.replace(".obj", ".mtl")
 
     if crop:
-        print(f"making cropped version of {input} at {tmp_cropped_obj}")
-        cropped_mesh = make_tile_4(
-            input_file=op.abspath(input),
+        print(f"making cropped version of {inp} at {tmp_cropped_obj}")
+        make_tile_4(
+            input_file=op.abspath(inp),
             output_file=tmp_cropped_obj,
             maxX=max_x,
             maxY=max_y,
@@ -51,9 +67,9 @@ def gen_tile(
         print("cropping completed")
     else:
         print("not cropping, set --crop to true to crop to x/y/z min/max")
-        copyfile(op.abspath(input), tmp_cropped_obj)
+        copyfile(op.abspath(inp), tmp_cropped_obj)
 
-    parent_dir = op.dirname(op.abspath(input))
+    parent_dir = op.dirname(op.abspath(inp))
 
     # TODO: Resize texture images. Use jpg compression to decrease file size
     # Note 1: changing the extension of a file does not convert a file
@@ -84,13 +100,12 @@ def gen_tile(
     copyfile(src_mtl, dst_mtl)
 
     # replace mtl png with jpg
-    fin = open(dst_mtl, "rt")
-    data = fin.read()
-    data = data.replace(".png", ".jpg")
-    fin.close()
-    fin = open(dst_mtl, "wt")
-    fin.write(data)
-    fin.close()
+    with open(dst_mtl, "rt", encoding="utf-8") as fin:
+        data = fin.read()
+        data = data.replace(".png", ".jpg")
+
+    with open(dst_mtl, "wt", encoding="utf-8") as fin:
+        fin.write(data)
 
     # Convert obj file to gltf or to 3d tiles
     if not b3dm:
@@ -107,7 +122,7 @@ def gen_tile(
     rmtree(tmp_dir)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -160,3 +175,6 @@ if __name__ == "__main__":
         args.quality,
         args.scale,
     )
+
+if __name__ == "__main__":
+    main()
