@@ -14,19 +14,19 @@
 # either express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # ISAAC Interface
 # Backend API
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # Database interface class definition
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 
 # roslibpy needs a logger in order to output errors inside callbacks
 import logging
 from time import sleep
 
-from pyArango.connection import *
-from requests.exceptions import ConnectionError
+import pyArango.connection as pac
+import requests.exceptions as rex
 
 logging.basicConfig()
 
@@ -44,20 +44,20 @@ class Database:
         self.conn = None
         for _ in range(600):
             try:
-                self.conn = Connection(
+                self.conn = pac.Connection(
                     arangoURL="http://iui_arangodb:8529",
                     username="root",
                     password="isaac",
                     max_retries=1,
                 )
                 break
-            except ConnectionError:
+            except rex.ConnectionError:
                 print(
                     "Database couldn't be reached; sleeping for 1 second before retrying"
                 )
                 sleep(1)
         if self.conn is None:
-            raise ConnectionError
+            raise rex.ConnectionError
 
         # Open the database
         if not self.conn.hasDatabase("isaac"):
@@ -85,7 +85,7 @@ class Database:
             + ros_topic
             + " LET newDoc = NEW RETURN newDoc"
         )
-        queryResult = self.db.AQLQuery(aql)
+        self.db.AQLQuery(aql)
 
     def load(self, ros_topic, start_time=None, end_time=None):
         # warning! timestamps are in milliseconds since epoch, not seconds

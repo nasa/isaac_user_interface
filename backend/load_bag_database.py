@@ -14,24 +14,22 @@
 # either express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # ISAAC Interface
 # Backend API
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # Database interface class definition
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 
 
 # roslibpy needs a logger in order to output errors inside callbacks
 import logging
-import sys
 import time
 from os import listdir
-from os.path import isfile, join
 
+import pyArango.connection as pac
 import rosbag
 import yaml
-from pyArango.connection import *
 
 logging.basicConfig()
 
@@ -41,7 +39,7 @@ class LoadBagDatabase:
         # Initiate the connection to http://127.0.0.1:8529
         time.sleep(5)
         print("Database: Initiating connection")
-        self.conn = Connection(
+        self.conn = pac.Connection(
             arangoURL="http://localhost:8529", username="root", password="isaac"
         )
         # Open the database
@@ -62,7 +60,6 @@ class LoadBagDatabase:
         print("Reading bag file")
         bag = rosbag.Bag(bag_file)
         bag_contents = bag.read_messages()
-        bagName = bag.filename
 
         # get list of topics from the bag
         bag_topics = []
@@ -73,8 +70,8 @@ class LoadBagDatabase:
 
         # create a new collection with the bag name
         # collection name needs to start with a letter
-        bagFile = "bag_" + bagFile[:-4]
-        print("Creating collection " + bagFile)
+        bag_file = "bag_" + bag_file[:-4]
+        print("Creating collection " + bag_file)
         if not self.db.hasCollection("yo"):
             self.db.createCollection(name="yo")
         # ensure index
@@ -93,17 +90,22 @@ class LoadBagDatabase:
                     + "yo"
                     + " LET newDoc = NEW RETURN newDoc"
                 )
-                queryResult = self.db.AQLQuery(aql)
+                self.db.AQLQuery(aql)
         bag.close()
 
 
-# Database connection
-if __name__ == "__main__":
-    # Load yaml configuration file
-    with open("config.yaml", "r") as f:
-        configuration = yaml.safe_load(f)
-    topics = [topic["name"] for topic in configuration["topics"]]
+def main():
+    # Database connection
+    if __name__ == "__main__":
+        # Load yaml configuration file
+        with open("config.yaml", "r", encoding="utf-8") as f:
+            configuration = yaml.safe_load(f)
+        topics = [topic["name"] for topic in configuration["topics"]]
 
-    # Get folder where bag files are stored
-    path = configuration["bag_path"]
-    LoadBagDatabase(path, topics)
+        # Get folder where bag files are stored
+        path = configuration["bag_path"]
+        LoadBagDatabase(path, topics)
+
+
+if __name__ == "__main__":
+    main()
