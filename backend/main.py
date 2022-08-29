@@ -14,17 +14,17 @@
 # either express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-# ----------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 # ISAAC Interface
 # Backend API
-# ----------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 import json
 import sys
 from time import time
 
 from database import Database
-from flask import Flask, abort, jsonify
+from flask import Flask, abort
 from ros_connection import ROSConnection
 
 
@@ -35,7 +35,7 @@ def log(message):
 
 log("opening config")
 # Load yaml configuration file
-with open("/config.json", "r") as f:
+with open("/config.json", "r", encoding="utf-8") as f:
     configuration = json.load(f)
 log("config loaded")
 
@@ -74,7 +74,7 @@ def config_request():
     # on each API call (i.e.: if you change your config
     # you just need to refresh the frontend page)
     global configuration
-    with open("/config.json", "r") as f:
+    with open("/config.json", "r", encoding="utf-8") as f:
         configuration = json.load(f)
     return json.dumps(configuration), 200, {"Content-Type": "application/json"}
 
@@ -88,7 +88,7 @@ def history_time_bound(ros_topic, start_time, end_time):
     if end_time <= start_time:
         abort(400)
 
-    if not (ros_topic in ros_connection.available_ros_topics):
+    if ros_topic not in ros_connection.available_ros_topics:
         abort(404)
 
     result = database_connection.load(
@@ -106,7 +106,7 @@ def ros_topic_list():
 
 
 if __name__ == "__main__":
-    print("Launching IDI Backend with the following configuration:")
+    print("Launching IUI Backend with the following configuration:")
     print(configuration)
     print("\n")
 

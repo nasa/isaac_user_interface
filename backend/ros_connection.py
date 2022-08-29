@@ -14,14 +14,14 @@
 # either express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # ISAAC Interface
 # Backend API
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # ROS Connection class definition file
 # For reference, see:
 # https://roslibpy.readthedocs.io/en/latest/
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 
 import os
 import time
@@ -36,7 +36,7 @@ class ROSConnection:
 
         self.ros = roslibpy.Ros(
             host=os.getenv("ROS_BRIDGE_IP", "rosbridge"),
-            port=int(os.getenv("ROS_BRIDGE_PORT", 9090)),
+            port=int(os.getenv("ROS_BRIDGE_PORT", "9090")),
         )
         while True:
             try:
