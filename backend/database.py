@@ -21,13 +21,15 @@
 # Database interface class definition
 # ----------------------------------------------------------------------------------------------------
 
-from pyArango.connection import *
-from requests.exceptions import ConnectionError
-from time import sleep
-
 # roslibpy needs a logger in order to output errors inside callbacks
 import logging
+from time import sleep
+
+from pyArango.connection import *
+from requests.exceptions import ConnectionError
+
 logging.basicConfig()
+
 
 class Database:
     def __init__(self):
@@ -42,10 +44,17 @@ class Database:
         self.conn = None
         for _ in range(600):
             try:
-                self.conn = Connection(arangoURL="http://iui_arangodb:8529", username="root", password="isaac", max_retries=1)
+                self.conn = Connection(
+                    arangoURL="http://iui_arangodb:8529",
+                    username="root",
+                    password="isaac",
+                    max_retries=1,
+                )
                 break
             except ConnectionError:
-                print("Database couldn't be reached; sleeping for 1 second before retrying")
+                print(
+                    "Database couldn't be reached; sleeping for 1 second before retrying"
+                )
                 sleep(1)
         if self.conn is None:
             raise ConnectionError
@@ -69,7 +78,13 @@ class Database:
     def save(self, message, ros_topic):
         ros_topic = ros_topic.replace("/", "_")[1:]
         # Save the message
-        aql = "INSERT " + str(message) + " INTO " + ros_topic + " LET newDoc = NEW RETURN newDoc"
+        aql = (
+            "INSERT "
+            + str(message)
+            + " INTO "
+            + ros_topic
+            + " LET newDoc = NEW RETURN newDoc"
+        )
         queryResult = self.db.AQLQuery(aql)
 
     def load(self, ros_topic, start_time=None, end_time=None):
@@ -78,10 +93,17 @@ class Database:
         if start_time is not None and end_time is not None:
             ros_topic = ros_topic.replace("/", "_")[1:]
 
-            aql = "FOR doc IN " + ros_topic + "\n"\
-                + "\tFILTER doc.header.stamp.secs >= " + str(start_time) + \
-                      " AND doc.header.stamp.secs <= " + str(end_time) + "\n" \
-                + "\tRETURN doc";
+            aql = (
+                "FOR doc IN "
+                + ros_topic
+                + "\n"
+                + "\tFILTER doc.header.stamp.secs >= "
+                + str(start_time)
+                + " AND doc.header.stamp.secs <= "
+                + str(end_time)
+                + "\n"
+                + "\tRETURN doc"
+            )
 
-        result = list(self.db.AQLQuery(aql, rawResults = True))
+        result = list(self.db.AQLQuery(aql, rawResults=True))
         return result

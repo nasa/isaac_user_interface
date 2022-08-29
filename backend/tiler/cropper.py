@@ -1,9 +1,9 @@
-import open3d as o3d
-import numpy as np
 import os
 import subprocess
 from datetime import datetime
 
+import numpy as np
+import open3d as o3d
 
 # This file crops an obj file based on a bounding box, and outputs
 # the cropped mesh as well as the texture that pertains to the remaining
@@ -13,7 +13,7 @@ from datetime import datetime
 # of your Blender executable. Tested with Blender 3.2.1
 #
 # Tuneable parameters: texture output resolution
-# 
+#
 # Version 8/12/22
 # Author: Nitzan Orr, University of Wisconsin--Madison
 # Email: nitzan@cs.wisc.edu
@@ -22,7 +22,7 @@ from datetime import datetime
 # Version 6/6/22
 # Author: Khaled Sharif, NASA
 
-blender_exec_dir = '/home/user/software/blender-3.2.1-linux-x64'
+blender_exec_dir = "/home/user/software/blender-3.2.1-linux-x64"
 
 
 def run(command):
@@ -33,60 +33,66 @@ def run(command):
         print(e.output)
 
 
-
-
-
 # Get the 3 vertex indices of a face from a line defining a face
 def get_f_line_vertex_indices(line_elements):
-    '''
-    Examples of lines defining faces. 
+    """
+    Examples of lines defining faces.
     In each line, vertex indices are 10, 40, and 70
     f 10 40 70
     f 10/10 40/20 70/30
     f 10/30/40 40/50/60 70/80/90
     f 10//30 40//60 70//90
-    '''
+    """
     output = []
     for l in line_elements:
-        output.append(l.split('/')) # split each result by '/'
-    return output[1][0], output[2][0], output[3][0] 
-
-
-
+        output.append(l.split("/"))  # split each result by '/'
+    return output[1][0], output[2][0], output[3][0]
 
 
 # Main cropping function: given a bounding box, if the centroid of a face
 # falls within the bounding box, then include the whole face, otherwise discard.
 # Also crop the texture image to include only textures requested by the bounding box
-def make_tile_4(input_file,output_file, minX, minY, minZ, maxX, maxY, maxZ, resolution=512):
+def make_tile_4(
+    input_file, output_file, minX, minY, minZ, maxX, maxY, maxZ, resolution=512
+):
 
-    print('\nCropping Mesh:', input_file)
+    print("\nCropping Mesh:", input_file)
 
     vertex_idx = [-1]
 
-    obj_file = open(input_file, 'r')
-    new_obj_file = open(output_file, 'w')
+    obj_file = open(input_file, "r")
+    new_obj_file = open(output_file, "w")
 
     # Retrieve index of each vertex by adding all vertices to list
-    # And write vertices, vt, vn, etc. to new_obj_file to maintain 
+    # And write vertices, vt, vn, etc. to new_obj_file to maintain
     # their index after cropping
     for line in obj_file:
         line_elements = line.split()
         if line_elements:
-            if line_elements[0] in ['v', 'vt', 'vn', 'vp', 'l', 'usemtl', 'mtllib', 'o', 'g']:
+            if line_elements[0] in [
+                "v",
+                "vt",
+                "vn",
+                "vp",
+                "l",
+                "usemtl",
+                "mtllib",
+                "o",
+                "g",
+            ]:
                 new_obj_file.write(line)
-                if line_elements[0] == 'v':
+                if line_elements[0] == "v":
                     vX = float(line_elements[1])
                     vY = float(line_elements[2])
                     vZ = float(line_elements[3])
                     vertex_idx.append((vX, vY, vZ))
-            if line_elements[0] == 'f':
+            if line_elements[0] == "f":
                 # get vertex indices from line defining a face
                 vertex_idxs = get_f_line_vertex_indices(line_elements)
                 v1_idx = int(vertex_idxs[0])
                 v2_idx = int(vertex_idxs[1])
                 v3_idx = int(vertex_idxs[2])
-                
+
                 # get x y z coords of the 3 vertices making a face
                 v1 = np.array(vertex_idx[v1_idx])
                 v2 = np.array(vertex_idx[v2_idx])
@@ -106,7 +112,6 @@ def make_tile_4(input_file,output_file, minX, minY, minZ, maxX, maxY, maxZ, reso
                 if inside_bbox:
                     new_obj_file.write(line)
 
-            
     # close both opened files
     obj_file.close()
     new_obj_file.close()
@@ -115,24 +120,32 @@ def make_tile_4(input_file,output_file, minX, minY, minZ, maxX, maxY, maxZ, reso
     # Assumes blender_code.py is in same directory at this file
     this_dir = os.path.dirname(os.path.realpath(__file__))
     print("PATH:", this_dir)
-    blender_py_code_path = os.path.join(this_dir, 'blender_code.py')
+    blender_py_code_path = os.path.join(this_dir, "blender_code.py")
 
     # Command: cd [path_to_blender_executable] && ./blender --background --python blender_code.py arg1 arg2 arg3)
-    command ='cd ' + blender_exec_dir 
-    command += ' && ./blender --background --python '+blender_py_code_path+' -- '+input_file+' '+output_file+' '+str(resolution)
-    print('COMMAND:', command)
+    command = "cd " + blender_exec_dir
+    command += (
+        " && ./blender --background --python "
+        + blender_py_code_path
+        + " -- "
+        + input_file
+        + " "
+        + output_file
+        + " "
+        + str(resolution)
+    )
+    print("COMMAND:", command)
     run(command)
 
-    print('Wrote cropped mesh to:', output_file)
+    print("Wrote cropped mesh to:", output_file)
     print()
 
 
 # For testing cropper.py independently
 # `python3 cropper.py`
-input_file = '/path/to/run.obj'
+input_file = "/path/to/run.obj"
 time_str = datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
-output_file = '/path/to/output_'+time_str+'.obj'
+output_file = "/path/to/output_" + time_str + ".obj"
 # make_tile_4(input_file, output_file, 11, -9, 3, 13, -8, 6) # no crop
 # make_tile_4(input_file, output_file, 11, -9, 3, 13, -8.5, 6) # crops top
-make_tile_4(input_file, output_file, 11, -8.5, 3, 13, -8, 6) # crops bottom
-
+make_tile_4(input_file, output_file, 11, -8.5, 3, 13, -8, 6)  # crops bottom

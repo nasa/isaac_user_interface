@@ -1,5 +1,3 @@
-
-
 ### Code for extracting ("baking") textures from a mesh ###
 # Version 8/12/22
 # Author: Nitzan Orr, University of Wisconsin--Madison
@@ -19,7 +17,7 @@
 # Download the latest version (tested with 3.2.1) of Blender from their website
 # Option 1: Run from terminal
 #   * Go to directory containing Blender executable
-#   * ./blender --background --python ~/Code/blender_code.py 
+#   * ./blender --background --python ~/Code/blender_code.py
 #
 # Option 2: Run using Blender's Console
 #   * Open Blender GUI
@@ -27,15 +25,15 @@
 
 
 ### BACKGROUND ###
-# The journey to create this code involved first learning from video 
+# The journey to create this code involved first learning from video
 #   tutorials how to perform the texture baking procedure the typical
 #   way, using the Blender software GUI. The steps taken are listed
-#   below in numerical order. Then, the steps taken in the GUI were translated into code, 
-#   namely using the Blender Python API. 
+#   below in numerical order. Then, the steps taken in the GUI were translated into code,
+#   namely using the Blender Python API.
 # Much of the translation was possible thanks to many Stack
-#   Overflow questions & answers about each GUI sub-procedure: 
+#   Overflow questions & answers about each GUI sub-procedure:
 #   I.e. "How to create a new UV map using the Blender python api"
-#     
+#
 # Helpful tutorials on accomplishing this procedure in Blender GUI:
 #
 # 1. "Bake Textures From one UV Map to Another UV Map (Blender Tutorial)"
@@ -61,9 +59,7 @@
 # https://blender.stackexchange.com/questions/1365/how-can-i-run-blender-from-command-line-or-a-python-script-without-opening-a-gui
 
 
-
-
-'''
+"""
 ===================================
 Steps for using the Blender GUI for creating (i.e. baking) a texture map
 from a textured 3D obj model. The steps were created from following tutorials. 
@@ -115,96 +111,96 @@ SAVING & EXPORT
 21. File > Export obj
 22. Check that the new texture is specified in the outputted .mtl file
 
-'''
+"""
 
 
-import bpy
 import os
 import sys
+
+import bpy
 
 # Argument parsing assumes this file was called from terminal in this format:
 # ./blender --background --python ~/Code/blender_code.py arg1 arg2 arg3
 # Note: argv[5] will make blender return an error at the end of execution
 # which you can ignore.
-# Ignore: Error: File format is not supported in file...[argv[5]] 
+# Ignore: Error: File format is not supported in file...[argv[5]]
 
 # "--" is Blender specific for passing in arguments to Blender python scripts
 # https://blender.stackexchange.com/questions/6817/how-to-pass-command-line-arguments-to-a-blender-python-script
-args = sys.argv[sys.argv.index("--") + 1:]
-print("ARGS:",args)
+args = sys.argv[sys.argv.index("--") + 1 :]
+print("ARGS:", args)
 INPUT_PATH = args[0]
 OUTPUT_PATH = args[1]
 RESOLUTION = int(args[2])
-print('Input Path:', INPUT_PATH)
-print('Output Path:', OUTPUT_PATH)
-print('Resolution:', RESOLUTION)
+print("Input Path:", INPUT_PATH)
+print("Output Path:", OUTPUT_PATH)
+print("Resolution:", RESOLUTION)
 print()
 
 input_path = INPUT_PATH
-export_filepath = OUTPUT_PATH 
+export_filepath = OUTPUT_PATH
 
 
 # delete the default cube at blender startup
 objs = bpy.data.objects
-if 'Cube' in objs:
+if "Cube" in objs:
     objs.remove(objs["Cube"])
 
 # Load obj
 imported_object = bpy.ops.import_scene.obj(filepath=input_path)
-obj = bpy.context.selected_objects[0] 
-print('Imported name: ', obj.name)
-objs[obj.name].select_set(True) # obj should already be selected, but just in case
+obj = bpy.context.selected_objects[0]
+print("Imported name: ", obj.name)
+objs[obj.name].select_set(True)  # obj should already be selected, but just in case
 # sets our mesh to be active
-bpy.context.view_layer.objects.active = objs[obj.name] 
+bpy.context.view_layer.objects.active = objs[obj.name]
 
-bpy.ops.object.mode_set(mode='EDIT') # Go to Edit mode
-new_uv_map_name = 'UVMap_2'
-obj.data.uv_layers.new(name=new_uv_map_name) # create and name new UV Map
+bpy.ops.object.mode_set(mode="EDIT")  # Go to Edit mode
+new_uv_map_name = "UVMap_2"
+obj.data.uv_layers.new(name=new_uv_map_name)  # create and name new UV Map
 # Set new UV map to active
-bpy.data.meshes[obj.name].uv_layers[new_uv_map_name].active = True 
+bpy.data.meshes[obj.name].uv_layers[new_uv_map_name].active = True
 # UV Unwrap the mesh textures
 bpy.ops.uv.smart_project(angle_limit=1.15192, island_margin=0.001)
 
 
 # Working in shader view now...
-obj = bpy.context.active_object 
+obj = bpy.context.active_object
 # You can choose your texture size (This will be the baked image)
-image_name = obj.name + '_BakedTexture'
+image_name = obj.name + "_BakedTexture"
 img = bpy.data.images.new(image_name, RESOLUTION, RESOLUTION)
 
 
-
-texture_node_name = 'Bake_node'
-old_uv_map_node_name = 'UV1_node'
-new_uv_map_node_name = 'UV2_node'
+texture_node_name = "Bake_node"
+old_uv_map_node_name = "UV1_node"
+new_uv_map_node_name = "UV2_node"
 
 print("Creating nodes for each material...")
 for mat in obj.data.materials:
     node_tree = mat.node_tree
     nodes = node_tree.nodes
 
-    orig_img_tex_node = nodes['Image Texture']
+    orig_img_tex_node = nodes["Image Texture"]
 
     # Creates uv map node in shader view and sets its uv map to current uv map
-    uv_map_node = nodes.new('ShaderNodeUVMap')
-    uv_map_node.name = old_uv_map_node_name 
+    uv_map_node = nodes.new("ShaderNodeUVMap")
+    uv_map_node.name = old_uv_map_node_name
     uv_map_node.uv_map = obj.data.uv_layers[0].name
-    node_tree.links.new(uv_map_node.outputs['UV'], orig_img_tex_node.inputs['Vector'])
+    node_tree.links.new(uv_map_node.outputs["UV"], orig_img_tex_node.inputs["Vector"])
 
     # Create image texture node in shader view and sets its image
-    texture_node = nodes.new('ShaderNodeTexImage') # Creates node in shader view
+    texture_node = nodes.new("ShaderNodeTexImage")  # Creates node in shader view
     texture_node.name = texture_node_name
     texture_node.select = True
     nodes.active = texture_node
-    texture_node.image = img #Assign the image to the node
+    texture_node.image = img  # Assign the image to the node
 
     # Creates another uv map node in shader view and sets its uv map to new uv map
-    new_uv_map_node = nodes.new('ShaderNodeUVMap')
+    new_uv_map_node = nodes.new("ShaderNodeUVMap")
     new_uv_map_node.name = new_uv_map_node_name
-    new_uv_map_node.uv_map = obj.data.uv_layers[new_uv_map_name].name  
-    node_tree.links.new(new_uv_map_node.outputs['UV'], texture_node.inputs['Vector'])
+    new_uv_map_node.uv_map = obj.data.uv_layers[new_uv_map_name].name
+    node_tree.links.new(new_uv_map_node.outputs["UV"], texture_node.inputs["Vector"])
 
-    # Make texture_node the only one selected. Make it active, as required for baking 
+    # Make texture_node the only one selected. Make it active, as required for baking
     for n in nodes:
         n.select = False
     nodes[texture_node.name].select = True
@@ -213,16 +209,17 @@ for mat in obj.data.materials:
 
 # Set render engine to cycles and set settings
 # This changes things in the Render Properties tab on the right-hand-side (Camera icon)
-bpy.context.scene.render.engine = 'CYCLES'
-bpy.context.scene.cycles.samples =  10
-bpy.context.scene.cycles.preview_samples = 10 # Takes a few seconds to update GUI
-bpy.context.scene.cycles.bake_type = 'DIFFUSE'
+bpy.context.scene.render.engine = "CYCLES"
+bpy.context.scene.cycles.samples = 10
+bpy.context.scene.cycles.preview_samples = 10  # Takes a few seconds to update GUI
+bpy.context.scene.cycles.bake_type = "DIFFUSE"
 bpy.context.scene.render.bake.use_pass_direct = False
 bpy.context.scene.render.bake.use_pass_indirect = False
 
 print("Baking...")
-bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL', filepath='/home/nitz/Downloads/8_8_22')
-
+bpy.ops.object.bake(
+    type="DIFFUSE", save_mode="EXTERNAL", filepath="/home/nitz/Downloads/8_8_22"
+)
 
 
 # This tells Blender what textures belong to the model during export
@@ -233,12 +230,12 @@ for mat in obj.data.materials:
     nodes = node_tree.nodes
 
     texture_node = nodes[texture_node_name]
-    old_texture_node = nodes['Image Texture']
+    old_texture_node = nodes["Image Texture"]
     old_uv_map_node = nodes[old_uv_map_node_name]
-    BSDF_node = nodes['Principled BSDF']
+    BSDF_node = nodes["Principled BSDF"]
 
     # Link new texture node to model
-    node_tree.links.new(texture_node.outputs['Color'], BSDF_node.inputs['Base Color'])
+    node_tree.links.new(texture_node.outputs["Color"], BSDF_node.inputs["Base Color"])
 
     # Delete old texture and uv map nodes
     nodes.remove(old_texture_node)
@@ -246,7 +243,7 @@ for mat in obj.data.materials:
 
 # Remove old UV Map layer, which essentially makes the new UV Map used during export
 uv_textures = obj.data.uv_layers
-uv_textures.remove(uv_textures['UVMap'])
+uv_textures.remove(uv_textures["UVMap"])
 
 output_dir = os.path.dirname(export_filepath)
 print("OUTPUT PATH:", output_dir)
@@ -255,15 +252,15 @@ if not os.path.exists(output_dir):
 
 # Textures will be saved to path where blender file is saved to.
 # The saving of the blend file has no other purpose. File is deleted.
-blend_file_name = 'temp.blend'
+blend_file_name = "temp.blend"
 blend_file_path = os.path.join(output_dir, blend_file_name)
 bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
-# Packing and unpacking is used for exported files to include textures 
+# Packing and unpacking is used for exported files to include textures
 bpy.data.images[image_name].pack()
-bpy.ops.file.unpack_all(method='USE_ORIGINAL') # USE_ORIGINAL saves textures in curr dir
-bpy.ops.export_scene.obj(filepath=export_filepath, path_mode='RELATIVE')
-os.remove(blend_file_path) # remove temp blend file
-print('Exported to:', export_filepath)
-print('Finished! \nBlender quitting...')
-
-
+bpy.ops.file.unpack_all(
+    method="USE_ORIGINAL"
+)  # USE_ORIGINAL saves textures in curr dir
+bpy.ops.export_scene.obj(filepath=export_filepath, path_mode="RELATIVE")
+os.remove(blend_file_path)  # remove temp blend file
+print("Exported to:", export_filepath)
+print("Finished! \nBlender quitting...")
