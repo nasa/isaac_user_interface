@@ -123,12 +123,8 @@ import os
 import sys
 
 # Argument parsing assumes this file was called from terminal in this format:
-# ./blender --background --python ~/Code/blender_code.py arg1 arg2 arg3
-# Note: argv[5] will make blender return an error at the end of execution
-# which you can ignore.
-# Ignore: Error: File format is not supported in file...[argv[5]] 
-
-# "--" is Blender specific for passing in arguments to Blender python scripts
+# ./blender --background --python ~/Code/blender_code.py -- arg1 arg2 arg3
+# "--" is Blender specific for passing in arguments (i.e. arg1, arg2, etc.) to Blender python scripts
 # https://blender.stackexchange.com/questions/6817/how-to-pass-command-line-arguments-to-a-blender-python-script
 args = sys.argv[sys.argv.index("--") + 1:]
 print("ARGS:",args)
