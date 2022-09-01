@@ -117,7 +117,7 @@ def make_tile_4(input_file,output_file, minX, minY, minZ, maxX, maxY, maxZ, reso
     print("PATH:", this_dir)
     blender_py_code_path = os.path.join(this_dir, 'blender_code.py')
 
-    # Command: cd [path_to_blender_executable] && ./blender --background --python blender_code.py arg1 arg2 arg3)
+    # Command: cd [path_to_blender_executable] && ./blender --background --python blender_code.py -- arg1 arg2 arg3)
     command ='cd ' + blender_exec_dir 
     command += ' && ./blender --background --python '+blender_py_code_path+' -- '+input_file+' '+output_file+' '+str(resolution)
     print('COMMAND:', command)
