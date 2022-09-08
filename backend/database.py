@@ -14,20 +14,22 @@
 # either express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # ISAAC Interface
 # Backend API
-# ----------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------
 # Database interface class definition
-# ----------------------------------------------------------------------------------------------------
-
-from pyArango.connection import *
-from requests.exceptions import ConnectionError
-from time import sleep
+# -------------------------------------------------------------------------------------------
 
 # roslibpy needs a logger in order to output errors inside callbacks
 import logging
+from time import sleep
+
+import pyArango.connection as pac
+import requests.exceptions as rex
+
 logging.basicConfig()
+
 
 class Database:
     def __init__(self):
@@ -42,13 +44,20 @@ class Database:
         self.conn = None
         for _ in range(600):
             try:
-                self.conn = Connection(arangoURL="http://iui_arangodb:8529", username="root", password="isaac", max_retries=1)
+                self.conn = pac.Connection(
+                    arangoURL="http://iui_arangodb:8529",
+                    username="root",
+                    password="isaac",
+                    max_retries=1,
+                )
                 break
-            except ConnectionError:
-                print("Database couldn't be reached; sleeping for 1 second before retrying")
+            except rex.ConnectionError:
+                print(
+                    "Database couldn't be reached; sleeping for 1 second before retrying"
+                )
                 sleep(1)
         if self.conn is None:
-            raise ConnectionError
+            raise rex.ConnectionError
 
         # Open the database
         if not self.conn.hasDatabase("isaac"):
@@ -69,8 +78,14 @@ class Database:
     def save(self, message, ros_topic):
         ros_topic = ros_topic.replace("/", "_")[1:]
         # Save the message
-        aql = "INSERT " + str(message) + " INTO " + ros_topic + " LET newDoc = NEW RETURN newDoc"
-        queryResult = self.db.AQLQuery(aql)
+        aql = (
+            "INSERT "
+            + str(message)
+            + " INTO "
+            + ros_topic
+            + " LET newDoc = NEW RETURN newDoc"
+        )
+        self.db.AQLQuery(aql)
 
     def load(self, ros_topic, start_time=None, end_time=None):
         # warning! timestamps are in milliseconds since epoch, not seconds
@@ -78,10 +93,17 @@ class Database:
         if start_time is not None and end_time is not None:
             ros_topic = ros_topic.replace("/", "_")[1:]
 
-            aql = "FOR doc IN " + ros_topic + "\n"\
-                + "\tFILTER doc.header.stamp.secs >= " + str(start_time) + \
-                      " AND doc.header.stamp.secs <= " + str(end_time) + "\n" \
-                + "\tRETURN doc";
+            aql = (
+                "FOR doc IN "
+                + ros_topic
+                + "\n"
+                + "\tFILTER doc.header.stamp.secs >= "
+                + str(start_time)
+                + " AND doc.header.stamp.secs <= "
+                + str(end_time)
+                + "\n"
+                + "\tRETURN doc"
+            )
 
-        result = list(self.db.AQLQuery(aql, rawResults = True))
+        result = list(self.db.AQLQuery(aql, rawResults=True))
         return result
