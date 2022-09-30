@@ -20,11 +20,36 @@ Perform basic processing.
 """
 
 import array
+import logging
 import os
 
 import cv2
 import numpy as np
 from tile_system import BoundingBox
+
+
+def abs_path_from_file(rel_path, file_path):
+    """
+    Return the absolute path for the specified relative path assuming
+    it was read from the file loaded from file_path.
+    """
+    return os.path.realpath(os.path.join(
+        os.path.dirname(os.path.realpath(file_path)),
+        rel_path
+    ))
+
+
+def rel_path_from_file(abs_path, file_path):
+    """
+    Return a relative path that would resolve to the specified
+    absolute path if it was written to the file at file_path.
+    Using relative paths makes it easier to relocate the tiler
+    output.
+    """
+    return os.path.relpath(
+        os.path.realpath(abs_path),
+        os.path.dirname(os.path.realpath(file_path)),
+    )
 
 
 def parse_face_vertex(v):
@@ -108,9 +133,9 @@ class MtlLib(object):
         """
         A dictionary mapping each material name to a tuple of
         information about the material's texture image. The tuple has
-        the form (material_image_path, material_image), where
-        material_image is an OpenCV image loaded from
-        material_image_path.
+        the form (material_image_path, material_image_shape), where
+        material_image_shape is the shape (H, W) of the image loaded
+        from material_image_path.
         """
 
         self.lines = lines
@@ -127,6 +152,7 @@ class MtlLib(object):
         images will also be loaded in order to read their resolution.
         """
         input_path = os.path.realpath(input_path)
+        logging.info("MtlLib.read %s", input_path)
 
         lines = []
         materials = {}
@@ -147,11 +173,9 @@ class MtlLib(object):
 
                 elif cmd == "map_Kd":
                     mtl_image_path = arg
-                    full_image_path = os.path.realpath(
-                        os.path.join(os.path.dirname(input_path), mtl_image_path)
-                    )
+                    full_image_path = abs_path_from_file(mtl_image_path, input_path)
                     img = cv2.imread(full_image_path)
-                    materials[mtl_name] = (mtl_image_path, img)
+                    materials[mtl_name] = (mtl_image_path, img.shape[:2])
 
         return MtlLib(input_path, materials, lines)
 
@@ -160,6 +184,9 @@ class MtlLib(object):
         Write to an MTL file. Any texture images referenced by
         the MTL must be written separately.
         """
+        output_path = os.path.realpath(output_path)
+        logging.info("MtlLib.write %s", output_path)
+
         if texture_map is None:
             texture_map = {}
 
@@ -251,6 +278,7 @@ class Geometry(object):
         MTL file and texture images will also be loaded.
         """
         input_path = os.path.realpath(input_path)
+        logging.info("Geometry.read %s", input_path)
 
         v = array.array("d")
         vt = array.array("d")
@@ -293,7 +321,7 @@ class Geometry(object):
                 elif cmd == "mtllib":
                     assert len(args) == 1
                     mtl_path = args[0]
-                    input_mtl_path = os.path.join(os.path.dirname(input_path), mtl_path)
+                    input_mtl_path = abs_path_from_file(mtl_path, input_path)
                     mtllib = MtlLib.read(input_mtl_path)
 
                 elif cmd == "usemtl":
@@ -323,6 +351,7 @@ class Geometry(object):
         images referenced by the MTL must be written separately.
         """
         output_path = os.path.realpath(output_path)
+        logging.info("Geometry.write %s", output_path)
 
         if self.mtllib:
             output_mtl_path = os.path.splitext(output_path)[0] + ".mtl"
@@ -330,8 +359,8 @@ class Geometry(object):
 
         with open(output_path, "w", encoding="utf-8") as out:
             if self.mtllib:
-                mtl_from_output_path = os.path.relpath(
-                    output_mtl_path, os.path.dirname(output_path)
+                mtl_from_output_path = rel_path_from_file(
+                    output_mtl_path, output_path
                 )
                 out.write(f"mtllib {mtl_from_output_path}\n")
             for v in self.v:
@@ -451,7 +480,7 @@ class Geometry(object):
         xyz_side_lengths = xyz_side_lengths0.reshape(-1)
 
         texture_image_sizes = [
-            self.mtllib.materials[mtl_name][1].shape[:2] for mtl_name in self.usemtl
+            self.mtllib.materials[mtl_name][1] for mtl_name in self.usemtl
         ]
         texture_image_sizes = np.array(texture_image_sizes, dtype=np.int32)
         f_image_size = texture_image_sizes[self.f_mtl, :]

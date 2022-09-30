@@ -25,7 +25,7 @@ import shutil
 
 import cv2
 import numpy as np
-from obj_geometry import Geometry
+from obj_geometry import Geometry, abs_path_from_file, rel_path_from_file
 from tile_system import Tile
 
 UPSAMPLE_FACTOR = 1.0
@@ -205,9 +205,6 @@ class TileGenerator(object):
         Output a 3D Tile set for the specified Geometry. This is the
         main driver function.
         """
-        if geom.is_empty():
-            return
-
         self.input_texel_size = geom.get_median_texel_size()
         self.upsample_texture(geom)
 
@@ -414,10 +411,9 @@ class TileGenerator(object):
         Upsample the original texture images, prior to doing per-tile
         repacking and dowsampling.
         """
-        for input_img_path, input_img in geom.mtllib.materials.values():
-            full_input_img_path = os.path.join(
-                os.path.dirname(os.path.realpath(geom.mtllib.input_path)),
-                input_img_path,
+        for input_img_path, input_img_shape in geom.mtllib.materials.values():
+            full_input_img_path = abs_path_from_file(
+                input_img_path, geom.mtllib.input_path
             )
             input_base = os.path.basename(input_img_path)
             output_base = f"up_{input_base}"
@@ -498,7 +494,7 @@ class TileGenerator(object):
 
         repack_geom = Geometry.read(repack_tile_path + ".obj")
         assert len(repack_geom.mtllib.materials) == 1
-        rel_repack_tile_image, repack_mtl_img = next(
+        rel_repack_tile_image, repack_mtl_img_shape = next(
             iter(repack_geom.mtllib.materials.values())
         )
         rel_downsample_tile_image = os.path.basename(downsample_tile_image)
@@ -581,6 +577,8 @@ class TileGenerator(object):
         called recursively while walking the octree structure defined by
         the tile system.
         """
+        logging.info("generate_tile %s", tile)
+
         geom = parent_geom.get_cropped(self.tile_system.get_bounding_box(tile))
         if geom.is_empty():
             return None
@@ -602,9 +600,9 @@ class TileGenerator(object):
         if self.debug_glb:
             output_tile_glb = self.convert_to_glb(tile)
 
-        rel_tile_b3dm = os.path.relpath(
+        rel_tile_b3dm = rel_path_from_file(
             self.get_output_tile_path(tile) + ".b3dm",
-            os.path.dirname(self.get_tileset_path()),
+            self.get_tileset_path(),
         )
 
         # The 3D Tiles geometricError field for a tile is defined to be the
@@ -628,9 +626,7 @@ class TileGenerator(object):
         # due to round-off.
         if scale_factor > 0.999:
             if self.debug_glb:
-                rel_tile_glb = os.path.relpath(
-                    output_tile_glb, os.path.dirname(self.leaf_tiles_path)
-                )
+                rel_tile_glb = rel_path_from_file(output_tile_glb, self.leaf_tiles_path)
                 self.leaf_tiles.write(rel_tile_glb + "\n")
             return meta
 
