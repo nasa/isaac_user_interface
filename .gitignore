@@ -69,3 +69,8 @@ ehthumbs_vista.db
 $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/node,linux,windows,webstorm+all,visualstudiocode
+
+__pycache__/
+
+# Location used by install_sample_data.sh
+/backend/tiler/setup/data/
